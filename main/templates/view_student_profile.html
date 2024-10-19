@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perfil del Estudiante</title>
+</head>
+<body>
+    <h1>Perfil de {{ student.name }}</h1>
+    <ul>
+        <li>Email: {{ student.email }}</li>
+        <li>Edad: {{ student.age }}</li>
+        <li>Número de estudiante: {{ student.student_number }}</li>
+        <li>Lugar de residencia: {{ student.location }}</li>
+        <li>Sentimiento: {{ student.feelings }}</li>
+        <li>Razón para la sesión: {{ student.reason }}</li>
+        <li>Psicólogo asignado: {{ student.psychologist.username }}</li>
+    </ul>
+    {% if can_edit %}
+    <form method="POST" action="{% url 'remove_psychologist' student.id %}">
+        {% csrf_token %}
+        <button type="submit">Eliminar psicólogo asignado</button>
+    </form>
+    {% endif %}
+    <h2>Notas privadas</h2>
+
+    <ul>
+        {% for note in notes %}
+            <li>
+                <strong>{{ note.created_by.username }}</strong> - {{ note.created_at|date:"d/m/Y H:i" }}<br>
+    
+                <!-- Mostrar el contenido como texto si no está en modo edición -->
+                <span id="note-text-{{ note.id }}">{{ note.content }}</span>
+    
+                <!-- Formulario de edición que está oculto por defecto -->
+                <form id="edit-form-{{ note.id }}" method="POST" style="display: none;">
+                    {% csrf_token %}
+                    <textarea name="private_notes" id="edit-area-{{ note.id }}">{{ note.content }}</textarea>
+                    <input type="hidden" name="note_id" value="{{ note.id }}">
+                    <button type="submit">Guardar cambios</button>
+                    <button type="button" onclick="cancelEdit({{ note.id }})">Cancelar</button>
+                </form>
+    
+                <!-- Botones de acción -->
+                {% if note.created_by == user %}
+                    <button type="button" id="edit-btn-{{ note.id }}" onclick="showEditForm({{ note.id }})">Editar</button>
+                {% endif %}
+            </li>
+        {% empty %}
+            <li>No hay notas aún.</li>
+        {% endfor %}
+    </ul>
+    
+    {% if can_edit %}
+        <h3>Agregar una nueva nota</h3>
+        <form method="POST">
+            {% csrf_token %}
+            <textarea name="private_notes" placeholder="Escribe aquí una nueva nota"></textarea>
+            <button type="submit">Guardar nota</button>
+        </form>
+    {% endif %}
+    
+    <!-- JavaScript para alternar entre el modo de edición y el modo de vista -->
+    <script>
+    function showEditForm(noteId) {
+        document.getElementById('note-text-' + noteId).style.display = 'none';
+        document.getElementById('edit-btn-' + noteId).style.display = 'none';
+        document.getElementById('edit-form-' + noteId).style.display = 'block';
+    }
+    
+    function cancelEdit(noteId) {
+        document.getElementById('note-text-' + noteId).style.display = 'inline';
+        document.getElementById('edit-btn-' + noteId).style.display = 'inline';
+        document.getElementById('edit-form-' + noteId).style.display = 'none';
+    }
+    </script>
+
+    <a href="{% url 'manage_students' %}">Volver a la gestión de estudiantes</a>
+</body>
+</html>

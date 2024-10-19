@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inicio Estudiante</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+</head>
+<body>
+    <header>
+        <div id="logo">
+            <a href="{% url 'home' %}">Equilibrium</a>
+        </div>
+    </header>
+
+    <section id="profile">
+        <h1>Bienvenido, {{ user.username }}</h1>
+        
+        {% if student.psychologist %}
+            <p>Tu psicólogo asignado es: <strong>{{ student.psychologist.username }}</strong></p>
+        {% else %}
+            <p>No tienes un psicólogo asignado actualmente.</p>
+        {% endif %}
+        
+        <a href="{% url 'explore_psychologists' %}" class="button">Explorar Psicólogos</a>
+    </section>
+
+    <script src="{% static 'js/main.js' %}"></script>
+</body>
+</html>

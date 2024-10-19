@@ -1,0 +1,65 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <title>Equilibrium</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+    {% load static %}
+    <!-- Enlazar el archivo CSS principal -->
+    <link rel="stylesheet" href="{% static 'css/main.css' %}" />
+</head>
+<body class="is-preload homepage">
+    <div id="page-wrapper">
+
+        <!-- Header -->
+        <div id="header-wrapper">
+            <header id="header" class="container">
+
+                <!-- Logo -->
+                <div id="logo">
+                    <h1><a href="{% url 'home' %}">Equilibrium</a></h1>
+                    <span>by Universidad La Salle</span>
+                </div>
+
+                <!-- Nav -->
+                <nav id="nav">
+                    <ul>
+                        <li class="current"><a href="{% url 'home' %}">Inicio</a></li>
+                        <li><a href="{% url 'register_psychologist' %}">Registro Psicólogo</a></li>
+                        <li><a href="{% url 'register_student' %}">Registro Estudiante</a></li>
+                        <li><a href="{% url 'login' %}">Iniciar Sesión</a></li>
+                        <li><a href="#">Acerca de Nosotros</a></li>
+                    </ul>
+                </nav>
+
+            </header>
+        </div>
+
+        <!-- Banner -->
+        <div id="banner-wrapper">
+            <div id="banner" class="box container">
+                <div class="row">
+                    <div class="col-7 col-12-medium">
+                        <h2>Bienvenido a Equilibrium</h2>
+                        <p>Una plataforma para mejorar tu bienestar mental</p>
+                    </div>
+                    <div class="col-5 col-12-medium">
+                        <ul>
+                            <li><a href="#" class="button large icon solid fa-arrow-circle-right">Agenda una cita</a></li>
+                            <li><a href="#" class="button alt large icon solid fa-question-circle">Más información</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contenido adicional aquí -->
+
+    </div>
+
+    <!-- Enlazar los archivos JS -->
+    <script src="{% static 'js/jquery.min.js' %}"></script>
+    <script src="{% static 'js/browser.min.js' %}"></script>
+    <script src="{% static 'js/main.js' %}"></script>
+</body>
+</html>

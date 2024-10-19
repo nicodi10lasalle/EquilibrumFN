@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block title %}Calendario de Citas - Equilibrium{% endblock %}
+
+{% block content %}
+    <div id="calendar"></div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var calendarEl = document.getElementById('calendar');
+
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'dayGridMonth',
+            locale: 'es',
+            events: '/appointments-data/',
+            headerToolbar: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'dayGridMonth,timeGridWeek,timeGridDay'
+            }
+        });
+
+        calendar.render();
+    });
+</script>
+{% endblock %}

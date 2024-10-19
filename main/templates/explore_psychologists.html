@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Explorar Psicólogos</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+</head>
+<body>
+    <header>
+        <div id="logo">
+            <a href="{% url 'home' %}">Equilibrium</a>
+        </div>
+    </header>
+
+    <h1>Explora Psicólogos</h1>
+    <ul>
+        {% for psychologist in psychologists %}
+            <li>
+                <strong>{{ psychologist.name }}</strong> - Especialidad: {{ psychologist.specialty }}<br>
+                <a href="{% url 'psychologist_schedule' psychologist.id %}">Ver disponibilidad</a>
+            </li>
+        {% empty %}
+            <li>No hay psicólogos disponibles en este momento.</li>
+        {% endfor %}
+    </ul>
+
+    <script src="{% static 'js/main.js' %}"></script>
+</body>
+</html>

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perfil del Psicólogo</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+</head>
+<body>
+    <header>
+        <div id="logo">
+            <a href="{% url 'home' %}">Equilibrium</a>
+        </div>
+    </header>
+
+    <section id="profile">
+        <h1>Bienvenido, {{ user.username }}</h1>
+        <p>Aquí puedes gestionar tu perfil y citas.</p>
+
+        <!-- Aquí añadimos el enlace al calendario -->
+        <a href="{% url 'psychologist_calendar' %}" class="button">Ver Calendario de Citas</a>
+
+        <!-- Añadimos el enlace para gestionar estudiantes -->
+        <a href="{% url 'manage_students' %}" class="button">Gestionar Estudiantes</a>
+        
+        <!-- Otros elementos del perfil del psicólogo -->
+    </section>
+
+    <script src="{% static 'js/main.js' %}"></script>
+</body>
+</html>

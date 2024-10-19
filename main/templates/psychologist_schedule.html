@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Disponibilidad de {{ psychologist.name }}</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+</head>
+<body>
+    <header>
+        <div id="logo">
+            <a href="{% url 'home' %}">Equilibrium</a>
+        </div>
+    </header>
+
+    <h1>Disponibilidad de {{ psychologist.name }}</h1>
+
+    <h2>Citas agendadas</h2>
+    <ul>
+        {% for appointment in appointments %}
+            <li>
+                Cita el {{ appointment.start_time|date:"d/m/Y H:i" }} - {{ appointment.end_time|date:"H:i" }}
+            </li>
+        {% empty %}
+            <li>No hay citas agendadas para este psicólogo.</li>
+        {% endfor %}
+    </ul>
+    
+    <h2>Agendar nueva cita</h2>
+    <form method="POST">
+        {% csrf_token %}
+        <label for="date">Selecciona una fecha y hora:</label>
+        <input type="datetime-local" name="date" required>
+        <button type="submit">Agendar cita</button>
+    </form>
+    
+    {% if success %}
+        <p class="success">{{ success }}</p>
+    {% endif %}
+    
+    {% if error %}
+        <p class="error">{{ error }}</p>
+    {% endif %}
+    
+    <h2>Citas agendadas</h2>
+    <ul>
+        {% for appointment in appointments %}
+            <li>Cita el {{ appointment.start_time|date:"d/m/Y H:i" }}</li>
+        {% empty %}
+            <li>No hay citas agendadas para este psicólogo.</li>
+        {% endfor %}
+    </ul>

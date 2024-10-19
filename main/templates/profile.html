@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perfil de Usuario</title>
+</head>
+<body>
+    <h1>Perfil de {{ profile_data.user.username }}</h1>
+    <ul>
+        <li>Nombre: {{ profile_data.name }}</li>
+        <li>Email: {{ profile_data.user.email }}</li>
+        <li>Edad: {{ profile_data.age }}</li>
+
+        {% if profile_data.specialty %}
+            <li>Especialidad: {{ profile_data.specialty }}</li>
+            <li>Teléfono: {{ profile_data.phone_number }}</li>
+        {% else %}
+            <li>Número de estudiante: {{ profile_data.student_number }}</li>
+            <li>Lugar de residencia: {{ profile_data.location }}</li>
+
+            <!-- Mostrar el psicólogo asignado, si existe -->
+            <li>Psicólogo asignado:
+                {% if profile_data.psychologist %}
+                    {{ profile_data.psychologist.username }}
+                {% else %}
+                    No asignado
+                {% endif %}
+            </li>
+        {% endif %}
+    </ul>
+    <a href="{% url 'edit_profile' %}">Editar perfil</a>
+</body>
+</html>
