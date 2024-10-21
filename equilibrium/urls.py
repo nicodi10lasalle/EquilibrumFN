@@ -40,5 +40,6 @@ urlpatterns = [
     path('student/<int:student_id>/remove_psychologist/', views.remove_psychologist, name='remove_psychologist'),
     path('explore_psychologists/', views.explore_psychologists, name='explore_psychologists'),
     path('psychologist/<int:psychologist_id>/schedule/', views.psychologist_schedule, name='psychologist_schedule'),
+    path('student/view_assigned_psychologist/', views.view_assigned_psychologist, name='view_assigned_psychologist'),
 
 ]

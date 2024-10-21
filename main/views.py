@@ -78,18 +78,22 @@ def profile(request, user_id):
 
 @login_required
 def edit_profile(request):
-    if hasattr(request.user, 'psychologist'):
-        profile_data = request.user.psychologist
+    # Verifica si el usuario es psicólogo o estudiante y asigna el form_class y profile_data
+    if hasattr(request.user, 'psychologist_profile'):
+        profile_data = request.user.psychologist_profile
         form_class = PsychologistEditForm
-    elif hasattr(request.user, 'student'):
-        profile_data = request.user.student
+    elif hasattr(request.user, 'student_profile'):
+        profile_data = request.user.student_profile
         form_class = StudentEditForm
+    else:
+        # Si el usuario no tiene perfil de psicólogo o estudiante, redirigirlo o manejar el error
+        return redirect('home')
 
     if request.method == 'POST':
         form = form_class(request.POST, instance=profile_data)
         if form.is_valid():
             form.save()
-            return redirect('profile')
+            return redirect('profile', user_id=request.user.id)
     else:
         form = form_class(instance=profile_data)
 
@@ -137,7 +141,15 @@ def assign_psychologist(request, student_id):
 def view_student_profile(request, student_id):
     student = get_object_or_404(Student, id=student_id)
     current_user = request.user
+    psychologist_assigned = student.psychologist
 
+    # Verificar si el usuario actual es el psicólogo asignado
+    if psychologist_assigned != current_user.psychologist_profile:
+        can_edit = False
+    else:
+        can_edit = True
+
+    # Manejo del formulario para crear o editar notas privadas
     if request.method == 'POST' and 'private_notes' in request.POST:
         note_id = request.POST.get('note_id', None)
         content = request.POST.get('private_notes')
@@ -148,15 +160,15 @@ def view_student_profile(request, student_id):
                 note.content = content
                 note.save()
         else:
-            if student.psychologist == current_user:
+            if can_edit:
                 PrivateNote.objects.create(
                     student=student,
                     content=content,
                     created_by=current_user
                 )
 
+    # Filtrar las notas del estudiante
     notes = PrivateNote.objects.filter(student=student).order_by('-created_at')
-    can_edit = (student.psychologist == current_user)
 
     return render(request, 'view_student_profile.html', {
         'student': student,
@@ -233,4 +245,18 @@ def psychologist_schedule(request, psychologist_id):
     return render(request, 'psychologist_schedule.html', {
         'psychologist': psychologist,
         'appointments': appointments
+    })
+
+@login_required
+def view_assigned_psychologist(request):
+    student = request.user.student_profile  # Obtener el perfil del estudiante
+    psychologist = student.psychologist  # Psicólogo asignado al estudiante
+
+    if psychologist is None:
+        return render(request, 'view_assigned_psychologist.html', {
+            'error': 'No tienes un psicólogo asignado actualmente.'
+        })
+
+    return render(request, 'view_assigned_psychologist.html', {
+        'psychologist': psychologist
     })

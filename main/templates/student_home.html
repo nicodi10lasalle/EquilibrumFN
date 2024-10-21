@@ -1,31 +1,74 @@
-<!DOCTYPE html>
+<!DOCTYPE HTML>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inicio Estudiante</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+    <title>Inicio Estudiante - Equilibrium</title>
     {% load static %}
-    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+    <link rel="stylesheet" href="{% static 'css/fontawesome-all.min.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/main.css' %}" />
 </head>
-<body>
-    <header>
-        <div id="logo">
-            <a href="{% url 'home' %}">Equilibrium</a>
-        </div>
-    </header>
+<body class="is-preload">
+    <div id="page-wrapper">
 
-    <section id="profile">
-        <h1>Bienvenido, {{ user.username }}</h1>
-        
-        {% if student.psychologist %}
-            <p>Tu psicólogo asignado es: <strong>{{ student.psychologist.username }}</strong></p>
-        {% else %}
-            <p>No tienes un psicólogo asignado actualmente.</p>
-        {% endif %}
-        
-        <a href="{% url 'explore_psychologists' %}" class="button">Explorar Psicólogos</a>
-    </section>
+        <!-- Header -->
+        <header id="header">
+            <h1 id="logo"><a href="{% url 'home' %}">Equilibrium</a></h1>
+            <nav id="nav">
+                <ul>
+                    <li><a href="{% url 'student_home' %}">Inicio</a></li>
+                    <li><a href="{% url 'explore_psychologists' %}">Explorar Psicólogos</a></li>
+                    <li><a href="{% url 'view_assigned_psychologist' %}">Ver Psicólogo Asignado</a></li>
+                    <li><a href="{% url 'profile' user.id %}">Ver Perfil</a></li> <!-- Botón para el perfil -->
+                    <li><a href="{% url 'logout' %}">Cerrar Sesión</a></li>
+                </ul>
+            </nav>
+        </header>
 
+        <!-- Main Content -->
+        <section id="main" class="container">
+            <header class="major">
+                <h2>Bienvenido, {{ user.username }}</h2>
+                <p>Administra tus citas y explora psicólogos disponibles.</p>
+            </header>
+
+            <section class="box special features">
+                <div class="features-row">
+                    <section>
+                        <span class="icon solid major fa-calendar-check accent2"></span>
+                        <h3>Ver Psicólogo Asignado</h3>
+                        <p>Puedes ver el perfil de tu psicólogo asignado y consultar su disponibilidad.</p>
+                        <a href="{% url 'view_assigned_psychologist' %}" class="button primary">Ver Psicólogo</a>
+                    </section>
+                    <section>
+                        <span class="icon solid major fa-search accent3"></span>
+                        <h3>Explorar Psicólogos</h3>
+                        <p>Encuentra y agenda una cita con otros psicólogos.</p>
+                        <a href="{% url 'explore_psychologists' %}" class="button primary">Explorar</a>
+                    </section>
+                </div>
+            </section>
+        </section>
+
+        <!-- Footer -->
+        <footer id="footer">
+            <ul class="icons">
+                <li><a href="#" class="icon brands fa-twitter"><span class="label">Twitter</span></a></li>
+                <li><a href="#" class="icon brands fa-facebook-f"><span class="label">Facebook</span></a></li>
+                <li><a href="#" class="icon brands fa-instagram"><span class="label">Instagram</span></a></li>
+            </ul>
+            <ul class="copyright">
+                <li>&copy; 2024 Equilibrium. Todos los derechos reservados.</li>
+            </ul>
+        </footer>
+
+    </div>
+
+    <script src="{% static 'js/jquery.min.js' %}"></script>
+    <script src="{% static 'js/jquery.dropotron.min.js' %}"></script>
+    <script src="{% static 'js/browser.min.js' %}"></script>
+    <script src="{% static 'js/breakpoints.min.js' %}"></script>
+    <script src="{% static 'js/util.js' %}"></script>
     <script src="{% static 'js/main.js' %}"></script>
 </body>
 </html>

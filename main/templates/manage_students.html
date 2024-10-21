@@ -3,40 +3,80 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestionar Estudiantes</title>
+    <title>Gestionar Estudiantes - Equilibrium</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/fontawesome-all.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
 </head>
-<body>
-    <h1>Gestionar Estudiantes</h1>
+<body class="is-preload">
+    <div id="page-wrapper">
 
-    <!-- Formulario de búsqueda -->
-    <form method="GET">
-        <input type="text" name="search" placeholder="Buscar estudiante por nombre">
-        <button type="submit">Buscar</button>
-    </form>
+        <!-- Header -->
+        <header id="header">
+            <h1 id="logo"><a href="{% url 'home' %}">Equilibrium</a></h1>
+            <nav id="nav">
+                <ul>
+                    <li><a href="{% url 'psychologist_home' %}">Inicio</a></li>
+                    <li><a href="{% url 'psychologist_calendar' %}">Calendario de Citas</a></li>
+                    <li><a href="{% url 'logout' %}">Cerrar Sesión</a></li>
+                </ul>
+            </nav>
+        </header>
 
-    <table>
-        <tr>
-            <th>Nombre</th>
-            <th>Número de Estudiante</th>
-            <th>Asignar Psicólogo</th>
-            <th>Ver Perfil</th>
-        </tr>
-        {% for student in students %}
-        <tr>
-            <td>{{ student.name }}</td>
-            <td>{{ student.student_number }}</td>
-            <td>
-                {% if student.psychologist %}
-                    Asignado a {{ student.psychologist.username }}
-                {% else %}
-                    <a href="{% url 'assign_psychologist' student.id %}">Asignar como Psicólogo</a>
-                {% endif %}
-            </td>
-            <td><a href="{% url 'view_student_profile' student.id %}">Ver Perfil</a></td>
-        </tr>
-        {% endfor %}
-    </table>
+        <section id="main" class="container">
+            <header class="major">
+                <h2>Gestionar Estudiantes</h2>
+                <p>Busca y administra los estudiantes asignados.</p>
+            </header>
 
-    <a href="{% url 'psychologist_home' %}">Volver al perfil</a>
+            <!-- Formulario de búsqueda -->
+            <form method="GET" class="box special">
+                <input type="text" name="search" placeholder="Buscar estudiante por nombre">
+                <button type="submit" class="button primary">Buscar</button>
+            </form>
+
+            <!-- Tabla de estudiantes -->
+            <table class="alt">
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Número de Estudiante</th>
+                        <th>Asignar Psicólogo</th>
+                        <th>Ver Perfil</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for student in students %}
+                    <tr>
+                        <td>{{ student.name }}</td>
+                        <td>{{ student.student_number }}</td>
+                        <td>
+                            {% if student.psychologist %}
+                                Asignado a {{ student.psychologist.username }}
+                            {% else %}
+                                <a href="{% url 'assign_psychologist' student.id %}">Asignar como Psicólogo</a>
+                            {% endif %}
+                        </td>
+                        <td><a href="{% url 'view_student_profile' student.id %}">Ver Perfil</a></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Footer -->
+        <footer id="footer">
+            <ul class="icons">
+                <li><a href="#" class="icon brands fa-twitter"><span class="label">Twitter</span></a></li>
+                <li><a href="#" class="icon brands fa-facebook-f"><span class="label">Facebook</span></a></li>
+                <li><a href="#" class="icon brands fa-instagram"><span class="label">Instagram</span></a></li>
+            </ul>
+            <ul class="copyright">
+                <li>&copy; 2024 Equilibrium. Todos los derechos reservados.</li>
+            </ul>
+        </footer>
+
+    </div>
+    <script src="{% static 'js/main.js' %}"></script>
 </body>
 </html>

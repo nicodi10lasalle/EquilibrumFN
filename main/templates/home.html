@@ -32,7 +32,7 @@
             padding: 1.5rem;
             background: #f4f4f4;
             border-radius: 10px;
-            min-height: 250px; /* Ajuste para garantizar que todos tengan el mismo tamaño */
+            min-height: 250px;
             max-height: 250px;
             display: flex;
             flex-direction: column;
@@ -45,6 +45,46 @@
 
         .button.primary {
             margin-top: 2rem;  /* Mueve el botón hacia abajo */
+        }
+
+        /* Estilos para la sección Acerca de Nosotros */
+        #about {
+            padding: 4rem 0;
+            background: #f8f8f8;
+            text-align: center;
+        }
+
+        #about h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        #about p {
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.6;
+            font-size: 1.2rem;
+            color: #555;
+        }
+
+        /* Estilos para la nueva sección de Importancia de la Salud Mental */
+        #mental-health {
+            padding: 4rem 0;
+            background: #f0f0f0;
+            text-align: center;
+        }
+
+        #mental-health h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        #mental-health p {
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.6;
+            font-size: 1.2rem;
+            color: #666;
         }
     </style>
 </head>
@@ -61,7 +101,7 @@
                     <li><a href="{% url 'register_psychologist' %}">Registro Psicólogo</a></li>
                     <li><a href="{% url 'register_student' %}">Registro Estudiante</a></li>
                     <li><a href="{% url 'login' %}">Iniciar Sesión</a></li>
-                    <li><a href="#">Acerca de Nosotros</a></li>
+                    <li><a href="#about">Acerca de Nosotros</a></li>
                 </ul>
             </nav>
         </header>
@@ -72,7 +112,7 @@
                 <h2>Bienvenido a Equilibrium</h2>
                 <p>Una plataforma diseñada para mejorar tu bienestar mental.</p>
                 <ul class="actions special">
-                    <li><a href="#" class="button primary">Agenda una Cita</a></li>
+                    <li><a href="{% url 'login' %}" class="button primary">Agenda una Cita</a></li>
                 </ul>
             </div>
         </section>
@@ -83,6 +123,19 @@
                 <h2>Nuestra misión</h2>
                 <p>En Equilibrium, estamos comprometidos a facilitar el acceso a profesionales de salud mental para estudiantes universitarios. Nuestro objetivo es brindarte el apoyo que necesitas en los momentos más difíciles.</p>
             </header>
+
+            <!-- Nueva Sección: Importancia de la Salud Mental -->
+            <section id="mental-health">
+                <h2>La importancia de la salud mental</h2>
+                <p>
+                    La salud mental es un pilar fundamental en el bienestar general de las personas. El estrés, la ansiedad y la presión académica son desafíos constantes para los estudiantes universitarios. 
+                    Sin una adecuada atención psicológica, estos problemas pueden escalar y afectar profundamente el rendimiento académico, la vida social e incluso la salud física. 
+                    En Equilibrium, creemos que la intervención temprana y el apoyo continuo son claves para mejorar la calidad de vida de los estudiantes.
+                </p>
+                <p>
+                    Nuestra plataforma tiene como objetivo no solo proporcionar acceso rápido a psicólogos especializados, sino también promover la toma de conciencia sobre la importancia de cuidar la mente y el bienestar emocional.
+                </p>
+            </section>
 
             <!-- Features Section con simetría mejorada -->
             <section class="box special features">
@@ -111,6 +164,29 @@
                     </section>
                 </div>
             </section>
+        </section>
+
+        <!-- Sección Acerca de Nosotros -->
+        <section id="about">
+            <h2>Acerca de Nosotros</h2>
+            <p>
+                En Equilibrium, entendemos la importancia de la salud mental en la vida de los estudiantes universitarios. 
+                El estrés académico, la presión social y los retos personales pueden afectar gravemente el bienestar de los jóvenes. 
+                Por eso hemos creado esta plataforma, para ofrecer un espacio donde los estudiantes puedan acceder a apoyo profesional 
+                de manera fácil y rápida.
+            </p>
+            <p>
+                Nuestra misión es reducir las barreras que enfrentan los estudiantes al buscar ayuda psicológica. 
+                Proporcionamos un sistema en el que los psicólogos pueden gestionar sus pacientes y llevar un seguimiento detallado de su progreso, 
+                mientras que los estudiantes pueden elegir al profesional que mejor se adapte a sus necesidades. 
+                Creemos que la atención a la salud mental debe ser accesible y eficiente, especialmente en entornos académicos, 
+                donde los desafíos emocionales son comunes.
+            </p>
+            <p>
+                Equilibrium también tiene como objetivo mejorar la comunicación entre psicólogos y estudiantes, 
+                facilitando la programación de citas y asegurando que cada estudiante reciba la atención que merece. 
+                Nos comprometemos a fomentar un entorno seguro y de confianza donde la privacidad y el bienestar de los usuarios son nuestra prioridad.
+            </p>
         </section>
 
         <!-- Footer -->

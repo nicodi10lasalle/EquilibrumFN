@@ -1,31 +1,72 @@
-<!DOCTYPE html>
+<!DOCTYPE HTML>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Explorar Psicólogos</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+    <title>Explorar Psicólogos - Equilibrium</title>
     {% load static %}
-    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+    <!-- Enlazar los archivos CSS -->
+    <link rel="stylesheet" href="{% static 'css/fontawesome-all.min.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/main.css' %}" />
 </head>
-<body>
-    <header>
-        <div id="logo">
-            <a href="{% url 'home' %}">Equilibrium</a>
-        </div>
-    </header>
+<body class="is-preload">
+    <div id="page-wrapper">
 
-    <h1>Explora Psicólogos</h1>
-    <ul>
-        {% for psychologist in psychologists %}
-            <li>
-                <strong>{{ psychologist.name }}</strong> - Especialidad: {{ psychologist.specialty }}<br>
-                <a href="{% url 'psychologist_schedule' psychologist.id %}">Ver disponibilidad</a>
-            </li>
-        {% empty %}
-            <li>No hay psicólogos disponibles en este momento.</li>
-        {% endfor %}
-    </ul>
+        <!-- Header -->
+        <header id="header">
+            <h1 id="logo"><a href="{% url 'home' %}">Equilibrium</a></h1>
+            <nav id="nav">
+                <ul>
+                    <li><a href="{% url 'student_home' %}">Inicio</a></li>
+                    <li><a href="{% url 'view_student_profile' student_id=user.student_profile.id %}">Ver Psicólogo Asignado</a></li>
+                    <li><a href="{% url 'logout' %}">Cerrar Sesión</a></li>
+                </ul>
+            </nav>
+        </header>
 
+        <!-- Main Content -->
+        <section id="main" class="container">
+            <header class="major">
+                <h2>Explorar Psicólogos</h2>
+                <p>Selecciona un psicólogo y agenda una cita con él.</p>
+            </header>
+
+            <section class="box special features">
+                <div class="row">
+                    {% for psychologist in psychologists %}
+                    <div class="col-6 col-12-mobile">
+                        <section>
+                            <span class="icon solid major fa-user accent2"></span>
+                            <h3>{{ psychologist.name }}</h3>
+                            <p>{{ psychologist.specialty }}</p>
+                            <a href="{% url 'psychologist_schedule' psychologist_id=psychologist.id %}" class="button primary">Ver Disponibilidad</a>
+                        </section>
+                    </div>
+                    {% endfor %}
+                </div>
+            </section>
+        </section>
+
+        <!-- Footer -->
+        <footer id="footer">
+            <ul class="icons">
+                <li><a href="#" class="icon brands fa-twitter"><span class="label">Twitter</span></a></li>
+                <li><a href="#" class="icon brands fa-facebook-f"><span class="label">Facebook</span></a></li>
+                <li><a href="#" class="icon brands fa-instagram"><span class="label">Instagram</span></a></li>
+            </ul>
+            <ul class="copyright">
+                <li>&copy; 2024 Equilibrium. Todos los derechos reservados.</li>
+            </ul>
+        </footer>
+
+    </div>
+
+    <!-- Scripts -->
+    <script src="{% static 'js/jquery.min.js' %}"></script>
+    <script src="{% static 'js/jquery.dropotron.min.js' %}"></script>
+    <script src="{% static 'js/browser.min.js' %}"></script>
+    <script src="{% static 'js/breakpoints.min.js' %}"></script>
+    <script src="{% static 'js/util.js' %}"></script>
     <script src="{% static 'js/main.js' %}"></script>
 </body>
 </html>

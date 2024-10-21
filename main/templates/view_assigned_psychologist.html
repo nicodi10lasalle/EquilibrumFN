@@ -3,10 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Disponibilidad de {{ psychologist.name }}</title>
+    <title>Psicólogo Asignado</title>
     {% load static %}
     <link rel="stylesheet" href="{% static 'css/fontawesome-all.min.css' %}">
     <link rel="stylesheet" href="{% static 'css/main.css' %}">
+    <style>
+        .button-group {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+    </style>
 </head>
 <body class="is-preload">
     <!-- Page Wrapper -->
@@ -18,7 +25,7 @@
             <nav id="nav">
                 <ul>
                     <li><a href="{% url 'student_home' %}">Inicio</a></li>
-                    <li><a href="{% url 'view_student_profile' student_id=user.student_profile.id %}">Ver Psicólogo Asignado</a></li>
+                    <li><a href="{% url 'explore_psychologists' %}">Explorar Psicólogos</a></li>
                     <li><a href="{% url 'logout' %}">Cerrar Sesión</a></li>
                 </ul>
             </nav>
@@ -27,41 +34,28 @@
         <!-- Main Content -->
         <section id="main" class="container">
             <header class="major">
-                <h2>Disponibilidad de {{ psychologist.name }}</h2>
-                <p>Consulta las citas disponibles y agenda una nueva cita.</p>
+                <h2>Psicólogo Asignado</h2>
+                <p>Información sobre tu psicólogo asignado.</p>
             </header>
 
-            <!-- Citas Agendadas -->
+            <!-- Detalles del Psicólogo -->
             <section class="box special">
-                <h2>Citas agendadas</h2>
-                <ul>
-                    {% for appointment in appointments %}
-                        <li>
-                            Cita el {{ appointment.start_time|date:"d/m/Y H:i" }} - {{ appointment.end_time|date:"H:i" }}
-                        </li>
-                    {% empty %}
-                        <li>No hay citas agendadas para este psicólogo.</li>
-                    {% endfor %}
-                </ul>
+                {% if psychologist %}
+                    <h3>{{ psychologist.user.first_name }} {{ psychologist.user.last_name }}</h3>
+                    <p><strong>Especialidad:</strong> {{ psychologist.specialty }}</p>
+                    <p><strong>Contacto:</strong> {{ psychologist.phone_number }}</p>
+                    <p><strong>Email:</strong> {{ psychologist.user.email }}</p>
+                {% else %}
+                    <p>No tienes un psicólogo asignado actualmente.</p>
+                {% endif %}
             </section>
 
-            <!-- Agendar nueva cita -->
-            <section class="box special">
-                <h2>Agendar nueva cita</h2>
-                <form method="POST" class="cta-form">
-                    {% csrf_token %}
-                    <label for="date">Selecciona una fecha y hora:</label>
-                    <input type="datetime-local" name="date" required>
-                    <button type="submit" class="button primary">Agendar cita</button>
-                </form>
-                
-                {% if success %}
-                    <p class="success">{{ success }}</p>
+            <!-- Botones: Sacar Cita y Regresar -->
+            <section class="box special button-group">
+                {% if psychologist %}
+                    <a href="{% url 'psychologist_schedule' psychologist.id %}" class="button primary">Sacar Cita</a>
                 {% endif %}
-                
-                {% if error %}
-                    <p class="error">{{ error }}</p>
-                {% endif %}
+                <a href="{% url 'student_home' %}" class="button">Regresar</a>
             </section>
         </section>
 

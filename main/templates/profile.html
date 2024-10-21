@@ -3,32 +3,87 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Perfil de Usuario</title>
+    <title>Perfil de Usuario - Equilibrium</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/fontawesome-all.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+    <style>
+        .profile-container {
+            text-align: center;
+            padding: 2rem;
+            background-color: #f8f8f8;
+        }
+        .profile-container h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+        }
+        .profile-container ul {
+            list-style: none;
+            padding: 0;
+            font-size: 1.2rem;
+            color: #555;
+        }
+        .profile-container ul li {
+            margin-bottom: 1rem;
+        }
+        .profile-container .button {
+            margin-top: 2rem;
+        }
+    </style>
 </head>
-<body>
-    <h1>Perfil de {{ profile_data.user.username }}</h1>
-    <ul>
-        <li>Nombre: {{ profile_data.name }}</li>
-        <li>Email: {{ profile_data.user.email }}</li>
-        <li>Edad: {{ profile_data.age }}</li>
+<body class="is-preload">
+    <div id="page-wrapper">
 
-        {% if profile_data.specialty %}
-            <li>Especialidad: {{ profile_data.specialty }}</li>
-            <li>Teléfono: {{ profile_data.phone_number }}</li>
-        {% else %}
-            <li>Número de estudiante: {{ profile_data.student_number }}</li>
-            <li>Lugar de residencia: {{ profile_data.location }}</li>
+        <!-- Header -->
+        <header id="header">
+            <h1 id="logo"><a href="{% url 'home' %}">Equilibrium</a></h1>
+            <nav id="nav">
+                <ul>
+                    <li><a href="{% url 'logout' %}">Cerrar Sesión</a></li>
+                </ul>
+            </nav>
+        </header>
 
-            <!-- Mostrar el psicólogo asignado, si existe -->
-            <li>Psicólogo asignado:
-                {% if profile_data.psychologist %}
-                    {{ profile_data.psychologist.username }}
+        <!-- Main Content -->
+        <section id="main" class="profile-container">
+            <h1>Perfil de {{ profile_data.user.username }}</h1>
+            <ul>
+                <li><strong>Nombre:</strong> {{ profile_data.name }}</li>
+                <li><strong>Email:</strong> {{ profile_data.user.email }}</li>
+                <li><strong>Edad:</strong> {{ profile_data.age }}</li>
+
+                {% if profile_data.specialty %}
+                    <li><strong>Especialidad:</strong> {{ profile_data.specialty }}</li>
+                    <li><strong>Teléfono:</strong> {{ profile_data.phone_number }}</li>
                 {% else %}
-                    No asignado
+                    <li><strong>Número de estudiante:</strong> {{ profile_data.student_number }}</li>
+                    <li><strong>Lugar de residencia:</strong> {{ profile_data.location }}</li>
+                    <li><strong>Psicólogo asignado:</strong> 
+                        {% if profile_data.psychologist %}
+                            {{ profile_data.psychologist.username }}
+                        {% else %}
+                            No asignado
+                        {% endif %}
+                    </li>
                 {% endif %}
-            </li>
-        {% endif %}
-    </ul>
-    <a href="{% url 'edit_profile' %}">Editar perfil</a>
+            </ul>
+            <a href="{% url 'edit_profile' %}" class="button primary">Editar Perfil</a>
+        </section>
+
+        <!-- Footer -->
+        <footer id="footer">
+            <ul class="icons">
+                <li><a href="#" class="icon brands fa-twitter"><span class="label">Twitter</span></a></li>
+                <li><a href="#" class="icon brands fa-facebook-f"><span class="label">Facebook</span></a></li>
+                <li><a href="#" class="icon brands fa-instagram"><span class="label">Instagram</span></a></li>
+            </ul>
+            <ul class="copyright">
+                <li>&copy; 2024 Equilibrium. Todos los derechos reservados.</li>
+            </ul>
+        </footer>
+    </div>
+
+    <!-- Scripts -->
+    <script src="{% static 'js/main.js' %}"></script>
 </body>
 </html>
