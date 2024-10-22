@@ -38,6 +38,11 @@
                     {% for appointment in appointments %}
                         <li>
                             Cita el {{ appointment.start_time|date:"d/m/Y H:i" }} - {{ appointment.end_time|date:"H:i" }}
+                            <form method="POST" style="display:inline;">
+                                {% csrf_token %}
+                                <input type="hidden" name="delete_appointment_id" value="{{ appointment.id }}">
+                                <button type="submit" class="button">Eliminar</button>
+                            </form>
                         </li>
                     {% empty %}
                         <li>No hay citas agendadas para este psicólogo.</li>

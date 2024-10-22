@@ -8,6 +8,8 @@ from django.contrib.auth.models import User
 from google.generativeai import GenerativeModel
 import json
 import google.generativeai as genai
+from datetime import datetime
+
 
 
 # Configuración de la API
@@ -140,8 +142,8 @@ def calendar_view(request):
 
 @login_required
 def appointments_data(request):
-    if request.user.is_authenticated and hasattr(request.user, 'psychologist'):
-        appointments = Appointment.objects.filter(psychologist=request.user.psychologist)
+    if request.user.is_authenticated and hasattr(request.user, 'psychologist_profile'):
+        appointments = Appointment.objects.filter(psychologist=request.user.psychologist_profile)
         events = []
         for appointment in appointments:
             events.append({
@@ -152,7 +154,7 @@ def appointments_data(request):
         return JsonResponse(events, safe=False)
     else:
         return JsonResponse([], safe=False)
-
+    
 @login_required
 def manage_students(request):
     students = Student.objects.all()
@@ -236,8 +238,8 @@ def psychologist_schedule(request, psychologist_id):
     psychologist = get_object_or_404(Psychologist, id=psychologist_id)
     appointments = Appointment.objects.filter(psychologist=psychologist)
 
-    if hasattr(request.user, 'student'):
-        student = request.user.student
+    if hasattr(request.user, 'student_profile'):
+        student = request.user.student_profile
     else:
         return render(request, 'psychologist_schedule.html', {
             'psychologist': psychologist,
@@ -246,43 +248,48 @@ def psychologist_schedule(request, psychologist_id):
         })
 
     if request.method == 'POST':
-        date_str = request.POST.get('date')
-        try:
-            # Validar y convertir el string a formato datetime
-            start_time = datetime.strptime(date_str, '%Y-%m-%dT%H:%M')
-            end_time = start_time  # Ajusta esto según la duración de la cita si es necesario
+        if 'date' in request.POST:
+            # Lógica para agendar cita
+            date_str = request.POST.get('date')
+            try:
+                start_time = datetime.strptime(date_str, '%Y-%m-%dT%H:%M')
+                end_time = start_time  # Puedes ajustar la duración aquí si lo deseas
 
-            # Verificar si la fecha está en el futuro
-            if start_time < datetime.now():
+                # Verificar que la fecha esté en el futuro
+                if start_time < datetime.now():
+                    return render(request, 'psychologist_schedule.html', {
+                        'psychologist': psychologist,
+                        'appointments': appointments,
+                        'error': 'No puedes agendar una cita en una fecha pasada.'
+                    })
+
+                # Crear la cita
+                Appointment.objects.create(
+                    student=student,
+                    psychologist=psychologist,
+                    start_time=start_time,
+                    end_time=end_time
+                )
+
+                return render(request, 'psychologist_schedule.html', {
+                    'psychologist': psychologist,
+                    'appointments': Appointment.objects.filter(psychologist=psychologist),
+                    'success': 'Cita agendada exitosamente.'
+                })
+
+            except ValueError:
                 return render(request, 'psychologist_schedule.html', {
                     'psychologist': psychologist,
                     'appointments': appointments,
-                    'error': 'No puedes agendar una cita en una fecha pasada.'
+                    'error': 'Formato de fecha inválido.'
                 })
 
-            # Guardar la nueva cita
-            Appointment.objects.create(
-                student=student,
-                psychologist=psychologist,
-                start_time=start_time,
-                end_time=end_time
-            )
-
-            # Refrescar citas después de guardar
-            appointments = Appointment.objects.filter(psychologist=psychologist)
-
-            return render(request, 'psychologist_schedule.html', {
-                'psychologist': psychologist,
-                'appointments': appointments,
-                'success': 'Cita agendada exitosamente.'
-            })
-
-        except ValueError:
-            return render(request, 'psychologist_schedule.html', {
-                'psychologist': psychologist,
-                'appointments': appointments,
-                'error': 'Formato de fecha inválido. Usa el formato correcto.'
-            })
+        elif 'delete_appointment_id' in request.POST:
+            # Lógica para eliminar cita
+            appointment_id = request.POST.get('delete_appointment_id')
+            appointment = get_object_or_404(Appointment, id=appointment_id, student=student)
+            appointment.delete()
+            return redirect('psychologist_schedule', psychologist_id=psychologist_id)
 
     return render(request, 'psychologist_schedule.html', {
         'psychologist': psychologist,
