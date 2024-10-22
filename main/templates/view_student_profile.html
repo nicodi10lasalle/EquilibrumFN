@@ -48,13 +48,13 @@
             {% endif %}
 
             <h2>Notas privadas</h2>
-
             <ul>
                 {% for note in notes %}
                     <li>
                         <strong>{{ note.created_by.username }}</strong> - {{ note.created_at|date:"d/m/Y H:i" }}<br>
-                        <span id="note-text-{{ note.id }}">{{ note.content }}</span>
-
+                        <span id="note-text-{{ note.id }}">{{ note.content }}</span> 
+                        <strong>Sentimiento:</strong> {{ note.sentiment|capfirst }}
+            
                         <!-- Formulario de edición oculto -->
                         <form id="edit-form-{{ note.id }}" method="POST" style="display: none;">
                             {% csrf_token %}
@@ -63,7 +63,7 @@
                             <button type="submit" class="button">Guardar</button>
                             <button type="button" onclick="cancelEdit({{ note.id }})" class="button">Cancelar</button>
                         </form>
-
+            
                         {% if can_edit and note.created_by == user %}
                             <button type="button" onclick="showEditForm({{ note.id }})" class="button">Editar</button>
                         {% endif %}
@@ -71,6 +71,7 @@
                 {% empty %}
                     <li>No hay notas aún.</li>
                 {% endfor %}
+            </ul>
             </ul>
 
             {% if can_edit %}

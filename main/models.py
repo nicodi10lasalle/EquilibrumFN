@@ -41,10 +41,11 @@ class Appointment(models.Model):
         return f"Cita con {self.student.name} el {self.start_time.strftime('%Y-%m-%d %H:%M')}"
     
 class PrivateNote(models.Model):
-    student = models.ForeignKey(Student, on_delete=models.CASCADE, related_name='notes')  # Cambiamos el related_name para evitar el conflicto
+    student = models.ForeignKey(Student, on_delete=models.CASCADE, related_name='notes')
     content = models.TextField()
-    created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='created_private_notes')  # Cambiamos el related_name
+    created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='created_private_notes')
     created_at = models.DateTimeField(auto_now_add=True)
+    sentiment = models.CharField(max_length=10, blank=True, null=True)  # Campo para guardar el sentimiento
 
     def __str__(self):
         return f"Nota de {self.created_by} para {self.student.name} el {self.created_at}"

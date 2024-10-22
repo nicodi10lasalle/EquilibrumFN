@@ -5,6 +5,41 @@ from .models import Psychologist, Student, Appointment, PrivateNote
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
+from google.generativeai import GenerativeModel
+import json
+import google.generativeai as genai
+
+
+# Configuración de la API
+def model_configai():
+    genai.configure(api_key="AIzaSyCWMDxet88R-k0AxsafKRLx1IxzSwinTS0")
+
+    generation_config = {
+        "temperature": 1,
+        "top_p": 0.95,
+        "top_k": 64,
+        "max_output_tokens": 8192,
+        "response_mime_type": "text/plain",
+    }
+
+    model = GenerativeModel(model_name="gemini-1.5-flash", generation_config=generation_config)
+    return model
+
+def llm_prompt_engineering(model, phrase):
+    chat = model.start_chat(
+        history=[
+            {"role": "user",
+             "parts": '''Vas a tomar la funcion de un analista de texto, 
+             tu objetivo es analizar el sentimiento de la oracion que te voy a dar,
+             el formato como me lo vas a responder es de la siguiente forma:
+                "{"sentiment":"result"}"
+            donde result sera la emocion y tiene 3 categoriasa, positivo, negativo y neutral segun sea el caso.'''
+             }
+        ]
+    )
+    response = chat.send_message(phrase)
+    return response.text
+
 
 def register_psychologist(request):
     if request.method == 'POST':
@@ -132,7 +167,8 @@ def manage_students(request):
 def assign_psychologist(request, student_id):
     student = get_object_or_404(Student, id=student_id)
     if hasattr(request.user, 'psychologist_profile'):
-        student.psychologist = request.user
+        psychologist = request.user.psychologist_profile  # Obtener la instancia de Psychologist
+        student.psychologist = psychologist  # Asignar la instancia de Psychologist
         student.save()
         return redirect('manage_students')
     return redirect('manage_students')
@@ -141,33 +177,31 @@ def assign_psychologist(request, student_id):
 def view_student_profile(request, student_id):
     student = get_object_or_404(Student, id=student_id)
     current_user = request.user
-    psychologist_assigned = student.psychologist
+    can_edit = student.psychologist == current_user.psychologist_profile
 
-    # Verificar si el usuario actual es el psicólogo asignado
-    if psychologist_assigned != current_user.psychologist_profile:
-        can_edit = False
-    else:
-        can_edit = True
-
-    # Manejo del formulario para crear o editar notas privadas
     if request.method == 'POST' and 'private_notes' in request.POST:
         note_id = request.POST.get('note_id', None)
         content = request.POST.get('private_notes')
+        model = model_configai()  # Inicializa el modelo para análisis de sentimientos
+        sentiment_result = llm_prompt_engineering(model, content)
+        sentiment_json = json.loads(sentiment_result)
+        sentiment = sentiment_json.get('sentiment', 'neutral')  # Analiza el sentimiento de la nota
 
         if note_id:
             note = get_object_or_404(PrivateNote, id=note_id)
             if note.created_by == current_user:
                 note.content = content
+                note.sentiment = sentiment  # Actualiza el sentimiento
                 note.save()
         else:
             if can_edit:
                 PrivateNote.objects.create(
                     student=student,
                     content=content,
-                    created_by=current_user
+                    created_by=current_user,
+                    sentiment=sentiment  # Guarda el sentimiento
                 )
 
-    # Filtrar las notas del estudiante
     notes = PrivateNote.objects.filter(student=student).order_by('-created_at')
 
     return render(request, 'view_student_profile.html', {
@@ -179,10 +213,18 @@ def view_student_profile(request, student_id):
 @login_required
 def remove_psychologist(request, student_id):
     student = get_object_or_404(Student, id=student_id)
-    if hasattr(request.user, 'psychologist_profile') and student.psychologist == request.user:
-        student.psychologist = None
-        student.save()
-    return redirect('manage_students')
+    
+    # Verifica si el usuario es un psicólogo
+    if hasattr(request.user, 'psychologist_profile'):
+        # Verificar si el estudiante tiene un psicólogo asignado
+        if student.psychologist:
+            student.psychologist = None  # Eliminar la asignación del psicólogo
+            student.save()
+            return redirect('view_student_profile', student_id=student_id)  # Redirigir a la vista de perfil del estudiante
+        else:
+            return redirect('manage_students')  # Si no hay psicólogo asignado, redirigir a gestionar estudiantes
+    else:
+        return redirect('manage_students')  # Si no es un psicólogo, redirigir a gestionar estudiantes
 
 @login_required
 def explore_psychologists(request):
