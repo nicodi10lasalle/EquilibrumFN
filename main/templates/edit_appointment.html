@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar Cita</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+</head>
+<body>
+    <section id="main" class="container">
+        <header class="major">
+            <h2>Editar Cita</h2>
+        </header>
+
+        {% if messages %}
+            {% for message in messages %}
+                <p class="alert {{ message.tags }}">{{ message }}</p>
+            {% endfor %}
+        {% endif %}
+
+        <form method="POST" class="form">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="date">Fecha y hora de la cita:</label>
+                <input type="datetime-local" name="date" id="date" required value="{{ appointment.start_time|date:'Y-m-d\TH:i' }}">
+            </div>
+            <div class="buttons">
+                <button type="submit" class="button primary">Guardar cambios</button>
+                <button type="submit" name="cancel" class="button">Cancelar</button>
+            </div>
+        </form>
+    </section>
+</body>
+</html>

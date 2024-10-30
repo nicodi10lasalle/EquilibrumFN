@@ -1,15 +1,49 @@
-<!DOCTYPE html>
+<!DOCTYPE HTML>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
     <title>Perfil del Psicólogo - Equilibrium</title>
     {% load static %}
-    <link rel="stylesheet" href="{% static 'css/fontawesome-all.min.css' %}">
-    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+    <link rel="stylesheet" href="{% static 'css/fontawesome-all.min.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/main.css' %}" />
+    <style>
+        /* Estilos para el mensaje de bienvenida */
+        .welcome-message {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #007ba3;
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-size: 1.2rem;
+            z-index: 1000;
+            opacity: 1;
+            transition: opacity 0.5s ease;
+        }
+        
+        /* Estilo para alinear las secciones en una fila */
+        .features-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 1rem;
+        }
+
+        .features-row section {
+            flex: 1;
+            text-align: center;
+        }
+    </style>
 </head>
 <body class="is-preload">
     <div id="page-wrapper">
+    
+        <!-- Mensaje de bienvenida -->
+        <div class="welcome-message" id="welcomeMessage">
+            Bienvenido, Psicólogo
+        </div>
 
         <!-- Header -->
         <header id="header">
@@ -19,12 +53,13 @@
                     <li><a href="{% url 'psychologist_home' %}">Inicio</a></li>
                     <li><a href="{% url 'manage_students' %}">Gestionar Estudiantes</a></li>
                     <li><a href="{% url 'psychologist_calendar' %}">Calendario de Citas</a></li>
-                    <li><a href="{% url 'profile' user.id %}">Ver Perfil</a></li> <!-- Botón para el perfil -->
+                    <li><a href="{% url 'profile' user.id %}">Ver Perfil</a></li>
                     <li><a href="{% url 'logout' %}">Cerrar Sesión</a></li>
                 </ul>
             </nav>
         </header>
 
+        <!-- Main Content -->
         <section id="main" class="container">
             <header class="major">
                 <h2>Bienvenido, {{ user.username }}</h2>
@@ -45,6 +80,13 @@
                         <p>Administra los perfiles y el progreso de los estudiantes asignados.</p>
                         <a href="{% url 'manage_students' %}" class="button primary">Gestionar Estudiantes</a>
                     </section>
+                    <section>
+                        <img src="{% static 'images/pic08.png' %}" alt="Icono de Citas" style="width: 25px; height: 25px; margin-bottom: 10px;">
+                        <h3>Gestionar Citas</h3>
+                        <p>Edición de citas y creación de citas para nuestros alumnos.</p>
+                        <a href="{% url 'manage_appointments' %}" class="button primary">Gestionar Citas</a>                    </section>
+                    
+                    
                 </div>
             </section>
         </section>
@@ -62,6 +104,21 @@
         </footer>
 
     </div>
+
     <script src="{% static 'js/main.js' %}"></script>
+
+    <!-- Script para ocultar el mensaje de bienvenida -->
+    <script>
+        // Función para ocultar el mensaje después de 3 segundos
+        setTimeout(function() {
+            var welcomeMessage = document.getElementById("welcomeMessage");
+            if (welcomeMessage) {
+                welcomeMessage.style.opacity = "0";
+                setTimeout(function() {
+                    welcomeMessage.style.display = "none";
+                }, 500); // Tiempo adicional para la transición
+            }
+        }, 3000); // 3000 ms = 3 segundos
+    </script>
 </body>
 </html>

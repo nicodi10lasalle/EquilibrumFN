@@ -41,5 +41,10 @@ urlpatterns = [
     path('explore_psychologists/', views.explore_psychologists, name='explore_psychologists'),
     path('psychologist/<int:psychologist_id>/schedule/', views.psychologist_schedule, name='psychologist_schedule'),
     path('student/view_assigned_psychologist/', views.view_assigned_psychologist, name='view_assigned_psychologist'),
-
+    path('password_reset/', auth_views.PasswordResetView.as_view(template_name='password_reset.html'), name='password_reset'),
+    path('password_reset_done/', auth_views.PasswordResetDoneView.as_view(template_name='password_reset_done.html'), name='password_reset_done'),
+    path('reset/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(template_name='password_reset_confirm.html'), name='password_reset_confirm'),
+    path('reset/done/', auth_views.PasswordResetCompleteView.as_view(template_name='password_reset_complete.html'), name='password_reset_complete'),
+    path('appointment/<int:appointment_id>/edit/', views.edit_appointment, name='edit_appointment'),
+    path('psychologist/manage_appointments/', views.manage_appointments, name='manage_appointments'),
 ]

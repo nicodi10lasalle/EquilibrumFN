@@ -11,6 +11,7 @@ class Psychologist(models.Model):
     email = models.EmailField(unique=True)
     specialty = models.CharField(max_length=100)
     phone_number = models.CharField(max_length=15)
+    cover_photo = models.ImageField(upload_to='cover_photos/', null=True, blank=True)
 
     def __str__(self):
         return self.name

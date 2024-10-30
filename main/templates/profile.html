@@ -26,8 +26,17 @@
         .profile-container ul li {
             margin-bottom: 1rem;
         }
-        .profile-container .button {
-            margin-top: 2rem;
+        /* Estilo para los botones en el encabezado */
+        .header-button {
+            margin-right: 15px;
+            padding: 8px 16px;
+            background-color: #007ba3;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+        .header-button:hover {
+            background-color: #005f7a;
         }
     </style>
 </head>
@@ -39,6 +48,10 @@
             <h1 id="logo"><a href="{% url 'home' %}">Equilibrium</a></h1>
             <nav id="nav">
                 <ul>
+                    <!-- Botón de regresar -->
+                    <li><a href="javascript:history.back()" class="header-button">Regresar</a></li>
+                    <!-- Botón de editar perfil -->
+                    <li><a href="{% url 'edit_profile' %}" class="header-button">Editar Perfil</a></li>
                     <li><a href="{% url 'logout' %}">Cerrar Sesión</a></li>
                 </ul>
             </nav>
@@ -67,7 +80,6 @@
                     </li>
                 {% endif %}
             </ul>
-            <a href="{% url 'edit_profile' %}" class="button primary">Editar Perfil</a>
         </section>
 
         <!-- Footer -->

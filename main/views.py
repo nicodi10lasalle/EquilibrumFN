@@ -9,6 +9,9 @@ from google.generativeai import GenerativeModel
 import json
 import google.generativeai as genai
 from datetime import datetime
+from django.contrib import messages
+from django.shortcuts import redirect
+from django.urls import reverse
 
 
 
@@ -35,7 +38,7 @@ def llm_prompt_engineering(model, phrase):
              tu objetivo es analizar el sentimiento de la oracion que te voy a dar,
              el formato como me lo vas a responder es de la siguiente forma:
                 "{"sentiment":"result"}"
-            donde result sera la emocion y tiene 3 categoriasa, positivo, negativo y neutral segun sea el caso.'''
+            donde result sera la emocion y tiene 5 categoriasa, Estable, Leve, Moderado, Grave y Critico segun sea el caso.'''
              }
         ]
     )
@@ -142,19 +145,21 @@ def calendar_view(request):
 
 @login_required
 def appointments_data(request):
+    # Verificar que el usuario es un psicólogo
     if request.user.is_authenticated and hasattr(request.user, 'psychologist_profile'):
         appointments = Appointment.objects.filter(psychologist=request.user.psychologist_profile)
-        events = []
-        for appointment in appointments:
-            events.append({
+        events = [
+            {
                 'title': f"Cita con {appointment.student.name}",
                 'start': appointment.start_time.isoformat(),
                 'end': appointment.end_time.isoformat(),
-            })
+            }
+            for appointment in appointments
+        ]
         return JsonResponse(events, safe=False)
     else:
         return JsonResponse([], safe=False)
-    
+
 @login_required
 def manage_students(request):
     students = Student.objects.all()
@@ -249,52 +254,26 @@ def psychologist_schedule(request, psychologist_id):
 
     if request.method == 'POST':
         if 'date' in request.POST:
-            # Lógica para agendar cita
             date_str = request.POST.get('date')
-            try:
-                start_time = datetime.strptime(date_str, '%Y-%m-%dT%H:%M')
-                end_time = start_time  # Puedes ajustar la duración aquí si lo deseas
-
-                # Verificar que la fecha esté en el futuro
-                if start_time < datetime.now():
-                    return render(request, 'psychologist_schedule.html', {
-                        'psychologist': psychologist,
-                        'appointments': appointments,
-                        'error': 'No puedes agendar una cita en una fecha pasada.'
-                    })
-
-                # Crear la cita
+            start_time = datetime.strptime(date_str, '%Y-%m-%dT%H:%M')
+            if start_time >= datetime.now():
                 Appointment.objects.create(
                     student=student,
                     psychologist=psychologist,
                     start_time=start_time,
-                    end_time=end_time
+                    end_time=start_time
                 )
-
-                return render(request, 'psychologist_schedule.html', {
-                    'psychologist': psychologist,
-                    'appointments': Appointment.objects.filter(psychologist=psychologist),
-                    'success': 'Cita agendada exitosamente.'
-                })
-
-            except ValueError:
-                return render(request, 'psychologist_schedule.html', {
-                    'psychologist': psychologist,
-                    'appointments': appointments,
-                    'error': 'Formato de fecha inválido.'
-                })
-
+                messages.success(request, 'Cita agendada exitosamente.')
+            else:
+                messages.error(request, 'No puedes agendar una cita en una fecha pasada.')
         elif 'delete_appointment_id' in request.POST:
-            # Lógica para eliminar cita
             appointment_id = request.POST.get('delete_appointment_id')
             appointment = get_object_or_404(Appointment, id=appointment_id, student=student)
             appointment.delete()
-            return redirect('psychologist_schedule', psychologist_id=psychologist_id)
+            messages.success(request, 'Cita eliminada exitosamente.')
 
-    return render(request, 'psychologist_schedule.html', {
-        'psychologist': psychologist,
-        'appointments': appointments
-    })
+    appointments = Appointment.objects.filter(psychologist=psychologist).order_by('start_time')
+    return render(request, 'psychologist_schedule.html', {'psychologist': psychologist, 'appointments': appointments})
 
 @login_required
 def view_assigned_psychologist(request):
@@ -309,3 +288,61 @@ def view_assigned_psychologist(request):
     return render(request, 'view_assigned_psychologist.html', {
         'psychologist': psychologist
     })
+
+from django.shortcuts import render, get_object_or_404, redirect
+from .models import Appointment
+
+@login_required
+def edit_appointment(request, appointment_id):
+    appointment = get_object_or_404(Appointment, id=appointment_id)
+
+    # Verificar si el usuario es el psicólogo de la cita o el estudiante involucrado
+    if not (
+        (hasattr(request.user, 'psychologist_profile') and appointment.psychologist.user == request.user) or
+        (hasattr(request.user, 'student_profile') and appointment.student.user == request.user)
+    ):
+        return redirect('home')  # Redirigir si el usuario no está autorizado
+
+    if request.method == 'POST':
+        # Si se presiona el botón de cancelar, redirige sin hacer cambios
+        if 'cancel' in request.POST:
+            return redirect('manage_appointments')
+
+        date_str = request.POST.get('date')
+        if date_str:  # Asegurarse de que date_str no sea None
+            try:
+                start_time = datetime.strptime(date_str, '%Y-%m-%dT%H:%M')
+                appointment.start_time = start_time
+                appointment.end_time = start_time  # Ajustar según la duración deseada de la cita
+                appointment.save()
+                messages.success(request, 'La cita se ha actualizado correctamente.')
+                return redirect('manage_appointments')
+            except ValueError:
+                messages.error(request, 'Formato de fecha inválido.')
+        else:
+            messages.error(request, 'La fecha de la cita es requerida.')
+
+    return render(request, 'edit_appointment.html', {'appointment': appointment})
+
+
+@login_required
+def manage_appointments(request):
+    # Verificar si el usuario es un psicólogo
+    if not hasattr(request.user, 'psychologist_profile'):
+        return redirect('home')  # Redirige a la página principal si no es psicólogo
+
+    psychologist = request.user.psychologist_profile
+    # Obtener todas las citas asignadas al psicólogo
+    appointments = Appointment.objects.filter(psychologist=psychologist).order_by('start_time')
+
+    if request.method == 'POST' and 'delete_appointment_id' in request.POST:
+        appointment_id = request.POST['delete_appointment_id']
+        appointment = get_object_or_404(Appointment, id=appointment_id, psychologist=psychologist)
+        appointment.delete()
+        messages.success(request, 'La cita ha sido eliminada exitosamente.')
+        return redirect('manage_appointments')
+
+    return render(request, 'manage_appointments.html', {
+        'appointments': appointments,
+    })
+

@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestionar Estudiantes - Equilibrium</title>
+    <title>Gestionar Citas - Equilibrium</title>
     {% load static %}
     <link rel="stylesheet" href="{% static 'css/fontawesome-all.min.css' %}">
     <link rel="stylesheet" href="{% static 'css/main.css' %}">
     <style>
-        /* Estilo para el mensaje de confirmación */
+        /* Estilo adicional para la confirmación de eliminación */
         .confirmation-message {
             display: none;
             color: green;
@@ -32,47 +32,52 @@
             </nav>
         </header>
 
+        <!-- Main Section -->
         <section id="main" class="container">
             <header class="major">
-                <h2>Gestionar Estudiantes</h2>
-                <p>Busca y administra los estudiantes asignados.</p>
+                <h2>Gestionar Citas</h2>
+                <p>Administra y ajusta las citas de los estudiantes.</p>
             </header>
-
-            <!-- Formulario de búsqueda -->
-            <form method="GET" class="box special">
-                <input type="text" name="search" placeholder="Buscar estudiante por nombre">
-                <button type="submit" class="button primary">Buscar</button>
-            </form>
 
             <!-- Mensaje de confirmación -->
             <div id="confirmation-message" class="confirmation-message">
-                Te has asignado exitosamente a este alumno.
+                La cita ha sido eliminada exitosamente.
             </div>
 
-            <!-- Tabla de estudiantes -->
+            <!-- Tabla de citas -->
             <table class="alt">
                 <thead>
                     <tr>
-                        <th>Nombre</th>
-                        <th>Número de Estudiante</th>
-                        <th>Asignar Psicólogo</th>
-                        <th>Ver Perfil</th>
+                        <th>Nombre del Estudiante</th>
+                        <th>Fecha y Hora de Inicio</th>
+                        <th>Fecha y Hora de Fin</th>
+                        <th>Editar</th>
+                        <th>Eliminar</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {% for student in students %}
+                    {% for appointment in appointments %}
                     <tr>
-                        <td>{{ student.name }}</td>
-                        <td>{{ student.student_number }}</td>
+                        <td>{{ appointment.student.name }}</td>
+                        <td>{{ appointment.start_time|date:"d/m/Y H:i" }}</td>
+                        <td>{{ appointment.end_time|date:"d/m/Y H:i" }}</td>
                         <td>
-                            {% if student.psychologist %}
-                                Asignado a {{ student.psychologist.username }}
-                            {% else %}
-                                <a href="{% url 'assign_psychologist' student.id %}" onclick="showConfirmationMessage()">Asignar como Psicólogo</a>
-                            {% endif %}
+                            <form method="GET" action="{% url 'edit_appointment' appointment.id %}" style="display:inline;">
+                                <button type="submit" class="button primary small">Editar</button>
+                            </form>
                         </td>
-                        <td><a href="{% url 'view_student_profile' student.id %}">Ver Perfil</a></td>
+                        <td>
+                            <form method="POST" style="display:inline;" onsubmit="return confirm('¿Estás seguro de que quieres eliminar esta cita?');">
+                                {% csrf_token %}
+                                <input type="hidden" name="delete_appointment_id" value="{{ appointment.id }}">
+                                <button type="submit" class="button small">Eliminar</button>
+                            </form>
+                        </td>
                     </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="5">No hay citas programadas.</td>
+                        </tr>
                     {% endfor %}
                 </tbody>
             </table>
@@ -92,9 +97,10 @@
 
     </div>
 
+    <!-- Scripts -->
     <script src="{% static 'js/main.js' %}"></script>
     <script>
-        // Función para mostrar el mensaje de confirmación
+        // Función para mostrar el mensaje de confirmación de eliminación
         function showConfirmationMessage() {
             var confirmationMessage = document.getElementById('confirmation-message');
             confirmationMessage.style.display = 'block';

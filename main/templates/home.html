@@ -9,53 +9,353 @@
     <link rel="stylesheet" href="{% static 'css/fontawesome-all.min.css' %}" />
     <link rel="stylesheet" href="{% static 'css/main.css' %}" />
     <style>
-        /* Ajustes adicionales para mejorar la simetría */
-        #logo {
-            font-size: 2.5em;
-            font-weight: bold;
+        .alert {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 1rem;
+        background-color: #4caf50;
+        color: white;
+        border-radius: 5px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        opacity: 1;
+        transition: opacity 0.5s ease;
+        z-index: 1000;
+    }
+        /* Estilos adicionales para mejorar la visualización */
+
+        /* Sección principal */
+        #mejor-opcion {
+            text-align: center;
+            padding: 3rem 1rem;
         }
 
-        nav ul li a {
-            font-size: 1.2em;
+        #mejor-opcion h2 {
+            font-size: 2rem;
+            color: #333;
+            margin-bottom: 2rem;
+            position: relative;
         }
 
-        .features-row {
+        #mejor-opcion h2::after {
+            content: '';
+            display: block;
+            width: 100px;
+            height: 4px;
+            background-color: #007ba3;
+            margin: 0.5rem auto;
+        }
+
+        /* Estilos de la cuadrícula */
+        .opcion-grid {
             display: flex;
             justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            max-width: 1200px;
+            margin: 0 auto;
             gap: 2rem;
+        }
+
+        .opcion-grid .imagen {
+            flex: 1;
+            min-width: 250px;
+            max-width: 400px;
+        }
+
+        .opcion-grid .contenido {
+            flex: 2;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
+
+        .opcion-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            text-align: left;
+        }
+
+        .opcion-item .icono {
+            font-size: 1.5rem;
+            color: #007ba3;
+        }
+
+        .opcion-item h3 {
+            color: #007ba3;
+            font-size: 1.2rem;
+            margin: 0;
+        }
+
+        .opcion-item p {
+            color: #555;
+            margin: 0.2rem 0 0;
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        /* Estilos para la sección de Problemas Reales */
+        #problemas-reales {
+            text-align: center;
+            padding: 3rem 1rem;
+            background-color: #f8f8f8;
+        }
+
+        #problemas-reales h2 {
+            font-size: 2rem;
+            color: #333;
             margin-bottom: 2rem;
         }
 
-        .features-row section {
-            flex: 1;
-            text-align: center;
-            padding: 1.5rem;
-            background: #f4f4f4;
-            border-radius: 10px;
-            min-height: 250px;
-            max-height: 250px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
+        #problemas-reales h3 {
+            color: #007ba3;
+            margin-bottom: 1.5rem;
         }
 
-        .features-row section h3 {
+        /* Estilos de la cuadrícula */
+        .problemas-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Tarjeta */
+        .problema-card {
+            background-color: #ffffff;
+            border-radius: 8px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 150px;
+            width: 150px;
+        }
+
+        .problema-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Icono */
+        .problema-card .icono {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Texto */
+        .problema-card h4 {
+            color: #333;
+            font-size: 1rem;
+            margin: 0;
+            font-weight: bold;
+        }
+
+        /* Responsividad */
+        @media (max-width: 768px) {
+            .problemas-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .problemas-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* sueño  */
+        #division-sueno {
+            text-align: center;
+            padding: 3rem 1rem;
+            background-color: #f8f8f8;
+        }
+
+        #division-sueno h2 {
+            font-size: 2.5rem;
+            color: #3367d6;
             margin-bottom: 1rem;
         }
 
-        .button.primary {
-            margin-top: 2rem;  /* Mueve el botón hacia abajo */
+        #division-sueno p {
+            max-width: 800px;
+            margin: 0 auto 2rem;
+            color: #555;
+            font-size: 1.2rem;
+            line-height: 1.6;
         }
 
-        /* Estilos para la sección Acerca de Nosotros */
-        #about {
+        /* Contenedor de la imagen y lista */
+        .sueno-content {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+
+        /* Imagen */
+        .sueno-image {
+            max-width: 400px;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .sueno-image img {
+            width: 100%;
+            height: auto;
+            border-radius: 8px;
+        }
+
+        /* Lista de pasos */
+        .sueno-list {
+            max-width: 500px;
+            text-align: left;
+        }
+
+        .sueno-list-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 1.5rem;
+        }
+
+        .sueno-list-icon {
+            font-size: 2rem;
+            color: #3367d6;
+            margin-right: 1rem;
+        }
+
+        .sueno-list-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .sueno-list-desc {
+            color: #555;
+            font-size: 1rem;
+            line-height: 1.4;
+        }
+
+        /* Botón */
+        .button {
+            background-color: #ff5b5b;
+            color: #fff;
+            padding: 0.8rem 1.5rem;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+        }
+
+        .button:hover {
+            background-color: #ff4040;
+        }
+
+        /* Logo */
+        #logo {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #333;
+        }
+
+        /* Navegación */
+        nav ul li a {
+            font-size: 1.2em;
+            color: #333;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        nav ul li a:hover {
+            color: #0090c5;
+        }
+
+        /* Banner */
+        #banner {
+            padding: 4rem 1rem;
+            background: linear-gradient(135deg, #0090c5 0%, #007ba3 100%);
+            color: white;
+            text-align: center;
+        }
+
+        #banner h2 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        #banner p {
+            font-size: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .button.primary {
+            background-color: #fff;
+            color: #0090c5;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+
+        .button.primary:hover {
+            background-color: #007ba3;
+            color: #fff;
+        }
+
+        /* Sección de características */
+        .features-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            justify-content: center;
             padding: 4rem 0;
+        }
+
+        .features-row section {
+            background-color: #f4f4f4;
+            padding: 2rem;
+            border-radius: 10px;
+            flex: 1 1 300px;
+            max-width: 45%;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .features-row section:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        .features-row section h3 {
+            margin-top: 1rem;
+            font-size: 1.5rem;
+            color: #333;
+        }
+
+        .features-row section p {
+            color: #555;
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+
+        /* Sección Acerca de Nosotros */
+        #about {
+            padding: 4rem 1rem;
             background: #f8f8f8;
             text-align: center;
         }
 
         #about h2 {
             font-size: 2.5rem;
+            color: #333;
             margin-bottom: 1.5rem;
         }
 
@@ -67,24 +367,100 @@
             color: #555;
         }
 
-        /* Estilos para la nueva sección de Importancia de la Salud Mental */
-        #mental-health {
-            padding: 4rem 0;
-            background: #f0f0f0;
+        /* Formulario de contacto */
+        #contact {
+            padding: 4rem 1rem;
+            background-color: #f8f8f8;
             text-align: center;
         }
 
-        #mental-health h2 {
+        #contact h2 {
             font-size: 2.5rem;
-            margin-bottom: 1.5rem;
+            color: #333;
+            margin-bottom: 1rem;
         }
 
-        #mental-health p {
-            max-width: 800px;
-            margin: 0 auto;
-            line-height: 1.6;
+        #contact p {
             font-size: 1.2rem;
-            color: #666;
+            margin-bottom: 2rem;
+            color: #555;
+        }
+
+        .contact-form {
+            max-width: 600px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .contact-form .form-group input,
+        .contact-form .form-group textarea {
+            width: 100%;
+            padding: 1rem;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            transition: border-color 0.3s ease;
+        }
+
+        .contact-form .form-group input:focus,
+        .contact-form .form-group textarea:focus {
+            border-color: #0090c5;
+        }
+
+        .contact-form button {
+            background-color: #0090c5;
+            color: #fff;
+            padding: 1rem;
+            border: none;
+            border-radius: 5px;
+            font-size: 1.2rem;
+            transition: background-color 0.3s ease;
+            cursor: pointer;
+        }
+
+        .contact-form button:hover {
+            background-color: #007ba3;
+        }
+
+        /* Footer */
+        #footer {
+            background-color: #333;
+            color: #fff;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        #footer .icons a {
+            color: #fff;
+            margin: 0 0.5rem;
+            font-size: 1.5rem;
+            transition: color 0.3s ease;
+        }
+
+        #footer .icons a:hover {
+            color: #0090c5;
+        }
+
+        /* Responsividad */
+        @media (max-width: 768px) {
+            .features-row {
+                flex-direction: column;
+            }
+
+            #banner h2 {
+                font-size: 2.5rem;
+            }
+
+            #banner p {
+                font-size: 1.2rem;
+            }
+
+            #about h2,
+            #contact h2 {
+                font-size: 2rem;
+            }
         }
     </style>
 </head>
@@ -98,8 +474,13 @@
             <nav id="nav">
                 <ul>
                     <li><a href="{% url 'home' %}">Inicio</a></li>
-                    <li><a href="{% url 'register_psychologist' %}">Registro Psicólogo</a></li>
-                    <li><a href="{% url 'register_student' %}">Registro Estudiante</a></li>
+                    <li class="dropdown">
+                        <a href="#">Registro</a>
+                        <ul class="dropdown-content">
+                            <li><a href="{% url 'register_psychologist' %}">Psicólogo</a></li>
+                            <li><a href="{% url 'register_student' %}">Estudiante</a></li>
+                        </ul>
+                    </li>
                     <li><a href="{% url 'login' %}">Iniciar Sesión</a></li>
                     <li><a href="#about">Acerca de Nosotros</a></li>
                 </ul>
@@ -127,17 +508,50 @@
             <!-- Nueva Sección: Importancia de la Salud Mental -->
             <section id="mental-health">
                 <h2>La importancia de la salud mental</h2>
-                <p>
-                    La salud mental es un pilar fundamental en el bienestar general de las personas. El estrés, la ansiedad y la presión académica son desafíos constantes para los estudiantes universitarios. 
-                    Sin una adecuada atención psicológica, estos problemas pueden escalar y afectar profundamente el rendimiento académico, la vida social e incluso la salud física. 
-                    En Equilibrium, creemos que la intervención temprana y el apoyo continuo son claves para mejorar la calidad de vida de los estudiantes.
-                </p>
-                <p>
-                    Nuestra plataforma tiene como objetivo no solo proporcionar acceso rápido a psicólogos especializados, sino también promover la toma de conciencia sobre la importancia de cuidar la mente y el bienestar emocional.
-                </p>
+                <p>La salud mental es un pilar fundamental en el bienestar general de las personas. El estrés, la ansiedad y la presión académica son desafíos constantes para los estudiantes universitarios.</p>
             </section>
 
-            <!-- Features Section con simetría mejorada -->
+                <!-- Sección de Problemas Reales -->
+    <section id="problemas-reales" class="container">
+        <h3>Resolvemos Problemas Reales</h3>
+        <h2>Desde Hace Más De 5 Años Solucionamos</h2>
+        <div class="problemas-grid">
+            <div class="problema-card">
+                <div class="problema-icon">😔</div>
+                <h4>Depresión</h4>
+            </div>
+            <div class="problema-card">
+                <div class="problema-icon">😟</div>
+                <h4>Ansiedad</h4>
+            </div>
+            <div class="problema-card">
+                <div class="problema-icon">😵</div>
+                <h4>Estrés Y Burnout</h4>
+            </div>
+            <div class="problema-card">
+                <div class="problema-icon">💔</div>
+                <h4>Problemas De Pareja</h4>
+            </div>
+            <div class="problema-card">
+                <div class="problema-icon">😳</div>
+                <h4>Bajo Rendimiento Escolar</h4>
+            </div>
+            <div class="problema-card">
+                <div class="problema-icon">😢</div>
+                <h4>Trastorno Límite De La Personalidad</h4>
+            </div>
+            <div class="problema-card">
+                <div class="problema-icon">😴</div>
+                <h4>Insomnio</h4>
+            </div>
+            <div class="problema-card">
+                <div class="problema-icon">😊</div>
+                <h4>Trastorno Obsesivo Compulsivo</h4>
+            </div>
+        </div>
+    </section>
+
+            <!-- Features Section -->
             <section class="box special features">
                 <div class="features-row">
                     <section>
@@ -166,34 +580,148 @@
             </section>
         </section>
 
-        <!-- Sección Acerca de Nosotros -->
-        <section id="about">
-            <h2>Acerca de Nosotros</h2>
-            <p>
-                En Equilibrium, entendemos la importancia de la salud mental en la vida de los estudiantes universitarios. 
-                El estrés académico, la presión social y los retos personales pueden afectar gravemente el bienestar de los jóvenes. 
-                Por eso hemos creado esta plataforma, para ofrecer un espacio donde los estudiantes puedan acceder a apoyo profesional 
-                de manera fácil y rápida.
-            </p>
-            <p>
-                Nuestra misión es reducir las barreras que enfrentan los estudiantes al buscar ayuda psicológica. 
-                Proporcionamos un sistema en el que los psicólogos pueden gestionar sus pacientes y llevar un seguimiento detallado de su progreso, 
-                mientras que los estudiantes pueden elegir al profesional que mejor se adapte a sus necesidades. 
-                Creemos que la atención a la salud mental debe ser accesible y eficiente, especialmente en entornos académicos, 
-                donde los desafíos emocionales son comunes.
-            </p>
-            <p>
-                Equilibrium también tiene como objetivo mejorar la comunicación entre psicólogos y estudiantes, 
-                facilitando la programación de citas y asegurando que cada estudiante reciba la atención que merece. 
-                Nos comprometemos a fomentar un entorno seguro y de confianza donde la privacidad y el bienestar de los usuarios son nuestra prioridad.
-            </p>
+        <!-- Sección ¿Por qué somos la mejor opción? -->
+    <section id="mejor-opcion" class="container">
+        <h2>¿Por qué somos la mejor opción?</h2>
+        <div class="opcion-grid">
+            <!-- Imagen -->
+            <div class="imagen">
+                <img src="ruta-a-tu-imagen.jpg" alt="Ilustración de interacción con el psicólogo" style="width:100%; max-width: 400px; border-radius: 8px;">
+            </div>
+
+            <!-- Contenido -->
+            <div class="contenido">
+                <div class="opcion-item">
+                    <div class="icono">🎓</div>
+                    <div>
+                        <h3>SERVICIOS PROFESIONALES</h3>
+                        <p>Todos nuestros terapeutas cuentan con título y cédula profesional, solo elegimos a los mejores del campo para que no te preocupes por su calidad.</p>
+                    </div>
+                </div>
+                <div class="opcion-item">
+                    <div class="icono">🏠</div>
+                    <div>
+                        <h3>PRESENCIAL Y POR VIDEOLLAMADA</h3>
+                        <p>Puedes realizar tus consultas de manera presencial o por videollamada, o de manera híbrida según te convenga más.</p>
+                    </div>
+                </div>
+                <div class="opcion-item">
+                    <div class="icono">⭐</div>
+                    <div>
+                        <h3>ENFOQUE COGNITIVO CONDUCTUAL</h3>
+                        <p>Todos nuestros psicólogos trabajan con el enfoque teórico metodológico cognitivo conductual, el cual es el más recomendado por la comunidad científica para abordar una gran variedad de problemas psicológicos.</p>
+                    </div>
+                </div>
+                <div class="opcion-item">
+                    <div class="icono">🌟</div>
+                    <div>
+                        <h3>TRATAMIENTO INTEGRAL</h3>
+                        <p>Además de psicoterapia, brindamos servicio médico en caso de ser necesario para abordar tu problema.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+        <!-- Sección de Trastornos del Sueño -->
+        <section id="division-sueno">
+            <h2>División De Trastornos Del Sueño</h2>
+            <p>Recientemente, hemos integrado una nueva división especializada en trastornos del sueño. Nuestro equipo está compuesto por profesionales de la salud con amplia experiencia y conocimientos en el campo de la medicina del sueño.</p>
+            
+            <div class="sueno-content">
+                <!-- Imagen de la división de trastornos -->
+                <div class="sueno-image">
+                    <img src="ruta-de-la-imagen.jpg" alt="División de Trastornos del Sueño">
+                </div>
+                
+                <!-- Lista de servicios -->
+                <div class="sueno-list">
+                    <div class="sueno-list-item">
+                        <div class="sueno-list-icon">🔍</div>
+                        <div>
+                            <div class="sueno-list-title">1. Valoración Médica Diagnóstica</div>
+                            <p class="sueno-list-desc">Consulta de medicina general: En la mayoría de los casos, el problema se resuelve a este nivel. A través de una historia clínica, se determinará un diagnóstico y tratamiento.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="sueno-list-item">
+                        <div class="sueno-list-icon">🧠</div>
+                        <div>
+                            <div class="sueno-list-title">2. Psicoterapia Cognitivo Conductual</div>
+                            <p class="sueno-list-desc">La psicoterapia se enfoca en identificar y cambiar los pensamientos, creencias y comportamientos problemáticos que pueden estar contribuyendo a los problemas de sueño.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="sueno-list-item">
+                        <div class="sueno-list-icon">💼</div>
+                        <div>
+                            <div class="sueno-list-title">3. Consulta Médica Con El Especialista En Sueño</div>
+                            <p class="sueno-list-desc">En algunos padecimientos de difícil manejo o con resistencia al tratamiento será necesario la intervención de un médico de alta especialidad en sueño para abordar el problema.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="sueno-list-item">
+                        <div class="sueno-list-icon">📊</div>
+                        <div>
+                            <div class="sueno-list-title">4. Realización De Estudios De Sueño</div>
+                            <p class="sueno-list-desc">El somnólogo puede recomendar la realización de estudios de sueño. Entre los estudios de sueño están la polisomnografía y la poligrafía respiratoria.</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Botón de "Saber Más" -->
+                    <a href="#" class="button">Saber Más</a>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- Contact Form Section -->
+        <section id="contact" class="container">
+            <h2>DUDAS O COMENTARIOS</h2>
+            <p>¡Contáctanos! Estamos interesados en ayudarte</p>
+            
+            <form action="/send-message/" method="POST" class="contact-form">
+                <div class="form-group">
+                    <label for="name">Nombre</label>
+                    <input type="text" id="name" name="name" placeholder="Nombre" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="email">Correo</label>
+                    <input type="email" id="email" name="email" placeholder="Correo" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="phone">Teléfono</label>
+                    <input type="tel" id="phone" name="phone" placeholder="Teléfono" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="message">Mensaje</label>
+                    <textarea id="message" name="message" placeholder="Mensaje" rows="5" required></textarea>
+                </div>
+                
+                <!-- Google reCAPTCHA -->
+                <div class="form-group">
+                    <div class="g-recaptcha" data-sitekey="TU_CLAVE_DE_SITIO_RECAPTCHA"></div>
+                </div>
+                
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" name="privacy_policy" required> 
+                        He leído el Aviso de Privacidad y deseo recibir información vía telefónica o correo electrónico
+                    </label>
+                </div>
+                
+                <button type="submit" class="button primary">Enviar</button>
+            </form>
         </section>
 
         <!-- Footer -->
         <footer id="footer">
             <ul class="icons">
                 <li><a href="#" class="icon brands fa-twitter"><span class="label">Twitter</span></a></li>
-                <li><a href="#" class="icon brands fa-facebook-f"><span class="label">Facebook</span></a></li>
+                <li><a href="https://www.facebook.com/profile.php" class="icon brands fa-facebook-f"><span class="label">Facebook</span></a></li>
                 <li><a href="#" class="icon brands fa-instagram"><span class="label">Instagram</span></a></li>
             </ul>
             <ul class="copyright">
@@ -203,12 +731,26 @@
 
     </div>
 
+    <script>
+        setTimeout(() => {
+            const alerts = document.querySelectorAll('.alert');
+            alerts.forEach(alert => {
+                alert.style.opacity = '0';
+                setTimeout(() => alert.remove(), 500); // Elimina el mensaje después de que la transición termina
+            });
+        }, 3000);
+    </script>
+    
+
     <!-- Scripts -->
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
     <script src="{% static 'js/jquery.min.js' %}"></script>
     <script src="{% static 'js/jquery.dropotron.min.js' %}"></script>
     <script src="{% static 'js/browser.min.js' %}"></script>
     <script src="{% static 'js/breakpoints.min.js' %}"></script>
     <script src="{% static 'js/util.js' %}"></script>
+    <script src="{% static 'js/main.js' %}"></script>
+    <script src="{% static 'js/jquery.min.js' %}"></script>
     <script src="{% static 'js/main.js' %}"></script>
 </body>
 </html>

@@ -7,6 +7,44 @@
     {% load static %}
     <link rel="stylesheet" href="{% static 'css/fontawesome-all.min.css' %}">
     <link rel="stylesheet" href="{% static 'css/main.css' %}">
+    <style>
+        /* Estilos para el mensaje de éxito */
+        #deleteMessage, #createMessage {
+            display: none;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            text-align: center;
+        }
+        #deleteMessage {
+            color: #b22222;
+            background-color: #ffe6e6;
+        }
+        #createMessage {
+            color: #2e7d32;
+            background-color: #e8f5e9;
+        }
+
+        /* Estilos para el contenedor del encabezado y botón */
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .button.primary {
+            background-color: #007ba3;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            text-decoration: none;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .button.primary:hover {
+            background-color: #005f7f;
+        }
+    </style>
 </head>
 <body class="is-preload">
     <!-- Page Wrapper -->
@@ -26,46 +64,60 @@
 
         <!-- Main Content -->
         <section id="main" class="container">
-            <header class="major">
-                <h2>Disponibilidad de {{ psychologist.name }}</h2>
-                <p>Consulta las citas disponibles y agenda una nueva cita.</p>
-            </header>
+            <div class="header-container">
+                <header class="major">
+                    <h2>Disponibilidad de {{ psychologist.name }}</h2>
+                    <p>Consulta las citas disponibles y agenda una nueva cita.</p>
+                </header>
+                <!-- Botón de regreso alineado a la derecha -->
+                <button onclick="history.back()" class="button primary">Regresar</button>
+            </div>
+
+            <!-- Mensajes de éxito -->
+            <div id="deleteMessage">La cita ha sido eliminada exitosamente.</div>
+            <div id="createMessage">Cita creada exitosamente.</div>
 
             <!-- Citas Agendadas -->
             <section class="box special">
                 <h2>Citas agendadas</h2>
                 <ul>
                     {% for appointment in appointments %}
-                        <li>
-                            Cita el {{ appointment.start_time|date:"d/m/Y H:i" }} - {{ appointment.end_time|date:"H:i" }}
-                            <form method="POST" style="display:inline;">
+                    <li>
+                        Cita el {{ appointment.start_time|date:"d/m/Y H:i" }} - {{ appointment.end_time|date:"H:i" }}
+                        {% if request.user == appointment.student.user %}
+                            <form method="POST" style="display:inline;" onsubmit="showDeleteMessage();">
                                 {% csrf_token %}
                                 <input type="hidden" name="delete_appointment_id" value="{{ appointment.id }}">
                                 <button type="submit" class="button">Eliminar</button>
                             </form>
-                        </li>
-                    {% empty %}
-                        <li>No hay citas agendadas para este psicólogo.</li>
-                    {% endfor %}
+                            <form method="GET" action="{% url 'edit_appointment' appointment.id %}" style="display:inline;">
+                                <button type="submit" class="button">Editar Cita</button>
+                            </form>
+                        {% endif %}
+                    </li>
+                {% empty %}
+                    <li>No hay citas agendadas para este psicólogo.</li>
+                {% endfor %}
                 </ul>
             </section>
 
             <!-- Agendar nueva cita -->
             <section class="box special">
                 <h2>Agendar nueva cita</h2>
-                <form method="POST" class="cta-form">
+                <form method="POST" class="cta-form" onsubmit="showCreateMessage();">
                     {% csrf_token %}
                     <label for="date">Selecciona una fecha y hora:</label>
                     <input type="datetime-local" name="date" required>
                     <button type="submit" class="button primary">Agendar cita</button>
                 </form>
-                
-                {% if success %}
-                    <p class="success">{{ success }}</p>
-                {% endif %}
-                
-                {% if error %}
-                    <p class="error">{{ error }}</p>
+
+                <!-- Mensajes de éxito o error de Django -->
+                {% if messages %}
+                    <div class="messages">
+                        {% for message in messages %}
+                            <p class="{{ message.tags }}">{{ message }}</p>
+                        {% endfor %}
+                    </div>
                 {% endif %}
             </section>
         </section>
@@ -87,5 +139,34 @@
     <!-- Scripts -->
     <script src="{% static 'js/jquery.min.js' %}"></script>
     <script src="{% static 'js/main.js' %}"></script>
+    <script>
+        // Función para mostrar el mensaje de éxito al eliminar la cita
+        function showDeleteMessage() {
+            const deleteMessage = document.getElementById('deleteMessage');
+            deleteMessage.style.display = 'block';
+            setTimeout(() => {
+                deleteMessage.style.opacity = '1';
+                deleteMessage.style.transition = 'opacity 1s';
+            }, 2000);
+
+            setTimeout(() => {
+                deleteMessage.style.display = 'none';
+            }, 3000);
+        }
+
+        // Función para mostrar el mensaje de éxito al crear la cita
+        function showCreateMessage() {
+            const createMessage = document.getElementById('createMessage');
+            createMessage.style.display = 'block';
+            setTimeout(() => {
+                createMessage.style.opacity = '1';
+                createMessage.style.transition = 'opacity 1s';
+            }, 2000);
+
+            setTimeout(() => {
+                createMessage.style.display = 'none';
+            }, 3000);
+        }
+    </script>
 </body>
 </html>

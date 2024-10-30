@@ -171,3 +171,4 @@ class StudentEditForm(forms.ModelForm):
             'feelings': '¿Cómo te sientes en general?',
             'reason': 'Razón para agendar una sesión',
         }
+

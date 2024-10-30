@@ -8,6 +8,13 @@
     <!-- Enlazar los archivos CSS -->
     <link rel="stylesheet" href="{% static 'css/fontawesome-all.min.css' %}" />
     <link rel="stylesheet" href="{% static 'css/main.css' %}" />
+    <style>
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+    </style>
 </head>
 <body class="is-preload">
     <div id="page-wrapper">
@@ -26,10 +33,14 @@
 
         <!-- Main Content -->
         <section id="main" class="container">
-            <header class="major">
-                <h2>Explorar Psicólogos</h2>
-                <p>Selecciona un psicólogo y agenda una cita con él.</p>
-            </header>
+            <div class="header-container">
+                <header class="major">
+                    <h2>Explorar Psicólogos</h2>
+                    <p>Selecciona un psicólogo y agenda una cita con él.</p>
+                </header>
+                <!-- Botón de regreso alineado a la derecha -->
+                <button onclick="history.back()" class="button primary">Regresar</button>
+            </div>
 
             <section class="box special features">
                 <div class="row">

@@ -3,14 +3,44 @@
 {% block title %}Calendario de Citas - Equilibrium{% endblock %}
 
 {% block content %}
+<div id="page-wrapper">
+    <!-- Header -->
+    <header id="header">
+        <h1 id="logo"><a href="{% url 'home' %}">Equilibrium</a></h1>
+        <nav id="nav">
+            <ul>
+                <li><a href="{% url 'psychologist_home' %}">Inicio</a></li>
+                <li><a href="{% url 'manage_appointments' %}">Gestionar Citas</a></li>
+                <li><a href="{% url 'logout' %}">Cerrar Sesión</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Main Section -->
     <section id="main" class="container">
         <header class="major">
             <h2>Calendario de Citas</h2>
             <p>Revisa y administra tus citas con estudiantes.</p>
         </header>
 
-        <div id="calendar"></div>
+        <!-- Calendario -->
+        <div class="box special">
+            <div id="calendar"></div>
+        </div>
     </section>
+
+    <!-- Footer -->
+    <footer id="footer">
+        <ul class="icons">
+            <li><a href="#" class="icon brands fa-twitter"><span class="label">Twitter</span></a></li>
+            <li><a href="#" class="icon brands fa-facebook-f"><span class="label">Facebook</span></a></li>
+            <li><a href="#" class="icon brands fa-instagram"><span class="label">Instagram</span></a></li>
+        </ul>
+        <ul class="copyright">
+            <li>&copy; 2024 Equilibrium. Todos los derechos reservados.</li>
+        </ul>
+    </footer>
+</div>
 {% endblock %}
 
 {% block scripts %}
