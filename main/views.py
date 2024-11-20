@@ -19,14 +19,14 @@ from .forms import ProfilePhotoForm
 
 # Configuración de la API
 def model_configai():
-    genai.configure(api_key="AIzaSyCWMDxet88R-k0AxsafKRLx1IxzSwinTS0")
+    genai.configure(api_key="AIzaSyA8DYgUKemH6H1fRGnZwtrF6Bid85xK_tM")
 
     generation_config = {
         "temperature": 1,
         "top_p": 0.95,
         "top_k": 64,
         "max_output_tokens": 8192,
-        "response_mime_type": "text/plain",
+        "response_mime_type": "application/json",
     }
 
     model = GenerativeModel(model_name="gemini-1.5-flash", generation_config=generation_config)
