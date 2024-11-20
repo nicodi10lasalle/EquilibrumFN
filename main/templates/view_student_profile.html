@@ -15,41 +15,27 @@
             justify-content: space-between;
             align-items: center;
             padding: 15px 30px;
-            position: relative;
-            top: 0;
-            width: 100%;
-            box-sizing: border-box;
         }
 
-        /* Ajuste del logo para que sea más grande */
         #logo a {
             font-size: 2.5em;
-            color: rgb(2, 0, 0);
+            color: #000;
             text-decoration: none;
         }
 
-        /* Alineación del icono de menú */
         .menu-icon {
             width: 50px;
             height: auto;
-            vertical-align: middle;
             margin-left: 20px;
         }
 
-        /* Estilo para centrar el contenido principal */
-        #main {
-            margin-top: 20px;
-            text-align: center;
-        }
-
-        /* Dropdown */
         .dropdown-content {
             display: none;
             position: absolute;
             right: 0;
             background-color: #f9f9f9;
             min-width: 220px;
-            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
             z-index: 1;
         }
 
@@ -66,6 +52,75 @@
 
         .dropdown-content a:hover {
             background-color: #e0e0e0;
+        }
+
+        /* Contenedores */
+        .section-container {
+            margin: 20px auto;
+            max-width: 800px;
+            background: #f4f4f4;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            text-align: center; /* Centra todo el contenido */
+        }
+
+        ul {
+            display: inline-block; /* Ajusta la lista al centro */
+            text-align: left; /* Alinea el texto de la lista a la izquierda */
+        }
+
+        .profile-photo {
+            border-radius: 50%;
+            width: 150px;
+            height: 150px;
+            object-fit: cover;
+            margin: 0 auto 20px auto; /* Centra la imagen */
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .note {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid #ccc;
+        }
+
+        .note-content {
+            flex: 1;
+            text-align: left;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .button {
+            background-color: #007ba3;
+            color: white;
+            padding: 5px 10px;
+            border: none;
+            border-radius: 5px;
+            font-size: 0.9em;
+            cursor: pointer;
+        }
+
+        .button:hover {
+            background-color: #005f78;
+        }
+
+        .delete-button {
+            background-color: #d9534f;
+        }
+
+        .delete-button:hover {
+            background-color: #c9302c;
         }
     </style>
 </head>
@@ -92,84 +147,74 @@
             </nav>
         </div>
 
-        <!-- Main Content -->
-        <section id="main" class="container">
-            <header class="major">
-                <h2>Perfil del Estudiante: {{ student.name }}</h2>
-                <p>Información detallada del estudiante asignado.</p>
-            </header>
-
+        <!-- Perfil del estudiante -->
+        <section class="section-container">
+            <h2>Perfil del Estudiante</h2>
+            {% if student.profile_photo %}
+                <img src="{{ student.profile_photo.url }}" alt="Foto del Estudiante" class="profile-photo">
+            {% endif %}
             <ul>
                 <li><strong>Email:</strong> {{ student.email }}</li>
                 <li><strong>Edad:</strong> {{ student.age }}</li>
                 <li><strong>Número de estudiante:</strong> {{ student.student_number }}</li>
                 <li><strong>Lugar de residencia:</strong> {{ student.location }}</li>
-                <li><strong>Sentimiento:</strong> {{ student.feelings }}</li>
-                <li><strong>Razón para la sesión:</strong> {{ student.reason }}</li>
                 <li><strong>Psicólogo asignado:</strong> {{ student.psychologist.user.username }}</li>
             </ul>
-
             {% if can_edit %}
             <form method="POST" action="{% url 'remove_psychologist' student.id %}">
                 {% csrf_token %}
-                <button type="submit" class="button primary">Eliminar psicólogo asignado</button>
-                <br>
+                <button type="submit" class="button delete-button">Eliminar Psicólogo Asignado</button>
             </form>
-            {% endif %}
-<br>
-            <h2>Notas privadas</h2>
-            <ul>
-                {% for note in notes %}
-                    <li>
-                        <strong>{{ note.created_by.username }}</strong> - {{ note.created_at|date:"d/m/Y H:i" }}<br>
-                        <span id="note-text-{{ note.id }}">{{ note.content }}</span> 
-                        <strong>Sentimiento:</strong> {{ note.sentiment|capfirst }}
-            
-                        <!-- Formulario de edición oculto -->
-                        <form id="edit-form-{{ note.id }}" method="POST" style="display: none;">
-                            {% csrf_token %}
-                            <textarea name="private_notes">{{ note.content }}</textarea>
-                            <input type="hidden" name="note_id" value="{{ note.id }}">
-                            <button type="submit" class="button">Guardar</button>
-                            <button type="button" onclick="cancelEdit({{ note.id }})" class="button">Cancelar</button>
-                        </form>
-            
-                        {% if can_edit and note.created_by == user %}
-                            <button type="button" onclick="showEditForm({{ note.id }})" class="button">Editar</button>
-                        {% endif %}
-                    </li>
-                {% empty %}
-                    <li>No hay notas aún.</li>
-                {% endfor %}
-            </ul>
-
-            {% if can_edit %}
-                <h3>Agregar una nueva nota</h3>
-                <form method="POST">
-                    {% csrf_token %}
-                    <textarea name="private_notes" placeholder="Escribe aquí una nueva nota"></textarea>
-                    <button type="submit" class="button primary">Guardar nota</button>
-                </form>
             {% endif %}
         </section>
 
-        <!-- Footer -->
-        <footer id="footer">
-            <ul class="icons">
-                <li><a href="#" class="icon brands fa-twitter"><span class="label">Twitter</span></a></li>
-                <li><a href="#" class="icon brands fa-facebook-f"><span class="label">Facebook"></span></a></li>
-                <li><a href="#" class="icon brands fa-instagram"><span class="label">Instagram"></span></a></li>
-            </ul>
-            <ul class="copyright">
-                <li>&copy; 2024 Equilibrium. Todos los derechos reservados.</li>
-            </ul>
-        </footer>
+        <!-- Notas privadas -->
+        <section class="section-container">
+            <h2>Notas Privadas</h2>
+            {% for note in notes %}
+                <div class="note">
+                    <div class="note-content">
+                        <strong>{{ note.created_by.username }}</strong> - {{ note.created_at|date:"d/m/Y H:i" }}<br>
+                        <span id="note-text-{{ note.id }}">{{ note.content }}</span><br>
+                        <strong>Diagnóstico:</strong> {{ note.sentiment }}<br>
+                        <strong>Estado:</strong> {{ note.state|default:"No definido" }}<br>
+                        <strong>Recomendación:</strong> {{ note.recommendation|default:"No definido" }}
+                    </div>
+                    <div class="buttons">
+                        {% if can_edit and note.created_by == user %}
+                            <!-- Botón para activar la edición -->
+                            <button type="button" onclick="showEditForm({{ note.id }})" class="button">Editar</button>
 
+                            <!-- Formulario de edición -->
+                            <form id="edit-form-{{ note.id }}" method="POST" style="display: none;">
+                                {% csrf_token %}
+                                <textarea name="private_notes">{{ note.content }}</textarea>
+                                <input type="hidden" name="note_id" value="{{ note.id }}">
+                                <button type="submit" class="button">Guardar</button>
+                                <button type="button" onclick="cancelEdit({{ note.id }})" class="button">Cancelar</button>
+                            </form>
+
+                            <!-- Botón para eliminar la nota -->
+                            <form method="POST" action="{% url 'delete_note' note.id %}" style="display: inline;">
+                                {% csrf_token %}
+                                <button type="submit" class="button delete-button">Eliminar</button>
+                            </form>
+                        {% endif %}
+                    </div>
+                </div>
+            {% empty %}
+                <p>No hay notas aún.</p>
+            {% endfor %}
+            {% if can_edit %}
+                <form method="POST">
+                    {% csrf_token %}
+                    <textarea name="private_notes" placeholder="Escribe aquí una nueva nota"></textarea>
+                    <button type="submit" class="button">Guardar Nota</button>
+                </form>
+            {% endif %}
+        </section>
     </div>
 
-    <script src="{% static 'js/main.js' %}"></script>
-
-    <!-- JavaScript para editar notas -->
     <script>
     function showEditForm(noteId) {
         document.getElementById('note-text-' + noteId).style.display = 'none';

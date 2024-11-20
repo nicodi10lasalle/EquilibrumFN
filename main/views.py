@@ -29,18 +29,27 @@ def model_configai():
         "response_mime_type": "application/json",
     }
 
-    model = GenerativeModel(model_name="gemini-1.5-flash", generation_config=generation_config)
+    model = GenerativeModel(model_name="gemini-1.5-pro", generation_config=generation_config)
     return model
 
 def llm_prompt_engineering(model, phrase):
     chat = model.start_chat(
         history=[
             {"role": "user",
-             "parts": '''Vas a tomar la funcion de un analista de texto, 
-             tu objetivo es analizar el sentimiento de la oracion que te voy a dar,
-             el formato como me lo vas a responder es de la siguiente forma:
-                "{"sentiment":"result"}"
-            donde result sera la emocion y tiene 5 categoriasa, Estable, Leve, Moderado, Grave y Critico segun sea el caso.'''
+             "parts": '''
+             Actúa como un psicólogo clínico. Analiza la siguiente nota y proporciona:
+             1. Un diagnóstico numérico entre 1 y 9 basado en la gravedad (1 siendo muy crítico y 9 estable).
+             2. Un estado asociado al diagnóstico:
+                - [1-3] Crítico, Atención Inmediata.
+                - [4-6] Moderado, Agendar en una o dos semanas.
+                - [7-9] Estable, Monitoreo regular.
+             3. Una recomendación para el tiempo de la cita basado en el diagnóstico:
+                - [1-3] En estos días.
+                - [4-6] En una o dos semanas.
+                - [7-9] En el próximo mes.
+             Devuelve un JSON en este formato:
+             {"diagnosis": <número>, "state": "<estado>", "recommendation": "<recomendación>"}
+             '''
              }
         ]
     )
@@ -220,16 +229,25 @@ def view_student_profile(request, student_id):
     if request.method == 'POST' and 'private_notes' in request.POST:
         note_id = request.POST.get('note_id', None)
         content = request.POST.get('private_notes')
-        model = model_configai()  # Inicializa el modelo para análisis de sentimientos
+        model = model_configai()  # Inicializa el modelo para análisis de notas
         sentiment_result = llm_prompt_engineering(model, content)
-        sentiment_json = json.loads(sentiment_result)
-        sentiment = sentiment_json.get('sentiment', 'neutral')  # Analiza el sentimiento de la nota
+
+        try:
+            sentiment_json = json.loads(sentiment_result)
+            diagnosis = sentiment_json.get('diagnosis', None)
+            state = sentiment_json.get('state', 'No definido')
+            recommendation = sentiment_json.get('recommendation', 'No definido')
+        except json.JSONDecodeError:
+            messages.error(request, "Error al analizar la nota. Inténtalo de nuevo.")
+            return redirect('view_student_profile', student_id=student_id)
 
         if note_id:
             note = get_object_or_404(PrivateNote, id=note_id)
             if note.created_by == current_user:
                 note.content = content
-                note.sentiment = sentiment  # Actualiza el sentimiento
+                note.sentiment = diagnosis  # Almacena el diagnóstico como parte del contenido
+                note.state = state
+                note.recommendation = recommendation
                 note.save()
         else:
             if can_edit:
@@ -237,7 +255,9 @@ def view_student_profile(request, student_id):
                     student=student,
                     content=content,
                     created_by=current_user,
-                    sentiment=sentiment  # Guarda el sentimiento
+                    sentiment=f"Diagnóstico: {diagnosis}",
+                    state=state,
+                    recommendation=recommendation
                 )
 
     notes = PrivateNote.objects.filter(student=student).order_by('-created_at')
@@ -393,3 +413,22 @@ def schedule_appointment(request):
             return redirect('explore_psychologists')
     else:
         return redirect('student_home')  # Redirige al inicio del estudiante si no es un estudiante
+    
+
+@login_required
+def delete_note(request, note_id):
+    # Obtener la nota
+    note = get_object_or_404(PrivateNote, id=note_id)
+    
+    # Verificar que el usuario actual sea el creador de la nota o el psicólogo asignado al estudiante
+    if note.created_by == request.user or (
+        hasattr(request.user, 'psychologist_profile') and 
+        note.student.psychologist == request.user.psychologist_profile
+    ):
+        note.delete()
+        messages.success(request, "Nota eliminada correctamente.")
+    else:
+        messages.error(request, "No tienes permiso para eliminar esta nota.")
+    
+    # Redirigir al perfil del estudiante
+    return redirect('view_student_profile', student_id=note.student.id)

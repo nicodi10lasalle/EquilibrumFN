@@ -49,7 +49,9 @@ class PrivateNote(models.Model):
     content = models.TextField()
     created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='created_private_notes')
     created_at = models.DateTimeField(auto_now_add=True)
-    sentiment = models.CharField(max_length=10, blank=True, null=True)  # Campo para guardar el sentimiento
+    sentiment = models.CharField(max_length=255, blank=True, null=True)  # Almacena el diagnóstico como texto
+    state = models.CharField(max_length=50, blank=True, null=True)  # Nuevo campo para el estado
+    recommendation = models.CharField(max_length=100, blank=True, null=True)  # Nuevo campo para la recomendación
 
     def __str__(self):
         return f"Nota de {self.created_by} para {self.student.name} el {self.created_at}"
