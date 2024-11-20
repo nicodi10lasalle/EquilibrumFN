@@ -1,65 +1,142 @@
-{% extends 'base.html' %}
+<!DOCTYPE HTML>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>Calendario de Citas - Equilibrium</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/fontawesome-all.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+    <link href='https://cdn.jsdelivr.net/npm/fullcalendar@5.10.2/main.min.css' rel='stylesheet' />
+    <style>
+        /* Barra azul superior */
+        .blue-bar {
+            background-color: #007ba3;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 30px;
+            position: relative;
+            top: 0;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        
+        .centered-header {
+            text-align: center;
+            margin-top: 20px; /* Ajusta el espacio superior como necesites */
+        }
 
-{% block title %}Calendario de Citas - Equilibrium{% endblock %}
+        /* Ajuste del logo para que sea más grande */
+        #logo a {
+            font-size: 2.5em;
+            color: rgb(2, 0, 0);
+            text-decoration: none;
+        }
 
-{% block content %}
-<div id="page-wrapper">
-    <!-- Header -->
-    <header id="header">
-        <h1 id="logo"><a href="{% url 'home' %}">Equilibrium</a></h1>
-        <nav id="nav">
-            <ul>
-                <li><a href="{% url 'psychologist_home' %}">Inicio</a></li>
-                <li><a href="{% url 'manage_appointments' %}">Gestionar Citas</a></li>
-                <li><a href="{% url 'logout' %}">Cerrar Sesión</a></li>
-            </ul>
-        </nav>
-    </header>
+        /* Alineación del icono de menú */
+        .menu-icon {
+            width: 50px;
+            height: auto;
+            vertical-align: middle;
+            margin-left: 20px;
+        }
 
-    <!-- Main Section -->
-    <section id="main" class="container">
-        <header class="major">
-            <h2>Calendario de Citas</h2>
-            <p>Revisa y administra tus citas con estudiantes.</p>
-        </header>
+        /* Dropdown */
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            right: 0;
+            background-color: #f9f9f9;
+            min-width: 220px;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            z-index: 1;
+        }
 
-        <!-- Calendario -->
-        <div class="box special">
-            <div id="calendar"></div>
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        .dropdown-content a {
+            color: black;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+        }
+
+        .dropdown-content a:hover {
+            background-color: #e0e0e0;
+        }
+    </style>
+</head>
+<body>
+    <div id="page-wrapper">
+
+        <!-- Barra azul superior -->
+        <div class="blue-bar">
+            <h1 id="logo"><a href="{% url 'home' %}">Equilibrium</a></h1>
+            <nav id="nav">
+                <ul>
+                    <li class="dropdown">
+                        <a href="javascript:void(0)" class="dropbtn">
+                            <img src="{% static 'img/menu-icon.png' %}" alt="Menú" class="menu-icon">
+                        </a>
+                        <div class="dropdown-content">
+                            <a href="{% url 'psychologist_home' %}">Inicio</a>
+                            <a href="{% url 'manage_appointments' %}">Gestionar Citas</a>
+                            <a href="{% url 'logout' %}">Cerrar Sesión</a>
+                        </div>
+                    </li>
+                </ul>
+            </nav>
         </div>
-    </section>
 
-    <!-- Footer -->
-    <footer id="footer">
-        <ul class="icons">
-            <li><a href="#" class="icon brands fa-twitter"><span class="label">Twitter</span></a></li>
-            <li><a href="#" class="icon brands fa-facebook-f"><span class="label">Facebook</span></a></li>
-            <li><a href="#" class="icon brands fa-instagram"><span class="label">Instagram</span></a></li>
-        </ul>
-        <ul class="copyright">
-            <li>&copy; 2024 Equilibrium. Todos los derechos reservados.</li>
-        </ul>
-    </footer>
-</div>
-{% endblock %}
+        <!-- Main Section -->
+        <section id="main" class="container">
+            <header class="major centered-header">
+                <br>
+                <h2>Calendario de Citas</h2>
+                <p>Revisa y administra tus citas con estudiantes.</p>
+            </header>
+            <!-- Calendario -->
+            <div class="box special">
+                <div id="calendar"></div>
+            </div>
+        </section>
 
-{% block scripts %}
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        var calendarEl = document.getElementById('calendar');
+        <!-- Footer -->
+        <footer id="footer">
+            <ul class="icons">
+                <li><a href="#" class="icon brands fa-twitter"><span class="label">Twitter</span></a></li>
+                <li><a href="#" class="icon brands fa-facebook-f"><span class="label">Facebook</span></a></li>
+                <li><a href="#" class="icon brands fa-instagram"><span class="label">Instagram</span></a></li>
+            </ul>
+            <ul class="copyright">
+                <li>&copy; 2024 Equilibrium. Todos los derechos reservados.</li>
+            </ul>
+        </footer>
+    </div>
 
-        var calendar = new FullCalendar.Calendar(calendarEl, {
-            initialView: 'dayGridMonth',
-            locale: 'es',
-            events: '/appointments-data/',
-            headerToolbar: {
-                left: 'prev,next today',
-                center: 'title',
-                right: 'dayGridMonth,timeGridWeek,timeGridDay'
-            }
+    <!-- Scripts -->
+    <script src="{% static 'js/jquery.min.js' %}"></script>
+    <script src="{% static 'js/main.js' %}"></script>
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.10.2/main.min.js'></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var calendarEl = document.getElementById('calendar');
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
+                locale: 'es',
+                events: '/appointments-data/',
+                headerToolbar: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'dayGridMonth,timeGridWeek,timeGridDay'
+                }
+            });
+            calendar.render();
         });
-
-        calendar.render();
-    });
-</script>
-{% endblock %}
+    </script>
+</body>
+</html>

@@ -8,29 +8,88 @@
     <link rel="stylesheet" href="{% static 'css/fontawesome-all.min.css' %}">
     <link rel="stylesheet" href="{% static 'css/main.css' %}">
     <style>
-        /* Estilo adicional para la confirmación de eliminación */
-        .confirmation-message {
+        /* Barra azul superior */
+        .blue-bar {
+            background-color: #007ba3;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 30px;
+            position: relative;
+            top: 0;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        /* Ajuste del logo para que sea más grande */
+        #logo a {
+            font-size: 2.5em;
+            color: rgb(2, 0, 0);
+            text-decoration: none;
+        }
+
+        /* Alineación del icono de menú */
+        .menu-icon {
+            width: 50px;
+            height: auto;
+            vertical-align: middle;
+            margin-left: 20px;
+        }
+
+        /* Estilo para centrar el contenido principal */
+        #main {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        /* Dropdown */
+        .dropdown-content {
             display: none;
-            color: green;
-            font-weight: bold;
-            margin-top: 10px;
+            position: absolute;
+            right: 0;
+            background-color: #f9f9f9;
+            min-width: 220px;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            z-index: 1;
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        .dropdown-content a {
+            color: black;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+        }
+
+        .dropdown-content a:hover {
+            background-color: #e0e0e0;
         }
     </style>
 </head>
 <body class="is-preload">
     <div id="page-wrapper">
 
-        <!-- Header -->
-        <header id="header">
+        <!-- Barra azul superior -->
+        <div class="blue-bar">
             <h1 id="logo"><a href="{% url 'home' %}">Equilibrium</a></h1>
             <nav id="nav">
                 <ul>
-                    <li><a href="{% url 'psychologist_home' %}">Inicio</a></li>
-                    <li><a href="{% url 'psychologist_calendar' %}">Calendario de Citas</a></li>
-                    <li><a href="{% url 'logout' %}">Cerrar Sesión</a></li>
+                    <li class="dropdown">
+                        <a href="javascript:void(0)" class="dropbtn">
+                            <img src="{% static 'img/menu-icon.png' %}" alt="Menú" class="menu-icon">
+                        </a>
+                        <div class="dropdown-content">
+                            <a href="{% url 'psychologist_home' %}">Inicio</a>
+                            <a href="{% url 'psychologist_calendar' %}">Calendario de Citas</a>
+                            <a href="{% url 'logout' %}">Cerrar Sesión</a>
+                        </div>
+                    </li>
                 </ul>
             </nav>
-        </header>
+        </div>
 
         <!-- Main Section -->
         <section id="main" class="container">
@@ -40,7 +99,7 @@
             </header>
 
             <!-- Mensaje de confirmación -->
-            <div id="confirmation-message" class="confirmation-message">
+            <div id="confirmation-message" class="confirmation-message" style="color: green; font-weight: bold; margin-top: 10px; display: none;">
                 La cita ha sido eliminada exitosamente.
             </div>
 

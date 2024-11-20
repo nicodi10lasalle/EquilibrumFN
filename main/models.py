@@ -3,7 +3,6 @@ from django.contrib.auth.models import User
 from datetime import datetime
 
 
-# Modelo para Psicólogos
 class Psychologist(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='psychologist_profile')
     name = models.CharField(max_length=100)
@@ -11,6 +10,7 @@ class Psychologist(models.Model):
     email = models.EmailField(unique=True)
     specialty = models.CharField(max_length=100)
     phone_number = models.CharField(max_length=15)
+    profile_photo = models.ImageField(upload_to='profile_photos/', null=True, blank=True)    
     cover_photo = models.ImageField(upload_to='cover_photos/', null=True, blank=True)
 
     def __str__(self):
@@ -23,11 +23,14 @@ class Student(models.Model):
     email = models.EmailField(unique=True)
     student_number = models.CharField(max_length=20, unique=True)
     location = models.CharField(max_length=100)
-    feelings = models.IntegerField(choices=[(i, i) for i in range(1, 6)])
-    reason = models.TextField()
-    psychologist = models.ForeignKey(Psychologist, on_delete=models.SET_NULL, null=True, blank=True, related_name='assigned_students')  # Cambia aquí a Psychologist
-    private_notes = models.TextField(blank=True, null=True)
-    note_creator = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='created_notes')
+    profile_photo = models.ImageField(upload_to='profile_photos/', null=True, blank=True)    
+    psychologist = models.ForeignKey(
+        Psychologist,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='assigned_students'
+    )
 
     def __str__(self):
         return self.name

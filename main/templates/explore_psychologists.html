@@ -9,27 +9,107 @@
     <link rel="stylesheet" href="{% static 'css/fontawesome-all.min.css' %}" />
     <link rel="stylesheet" href="{% static 'css/main.css' %}" />
     <style>
-        .header-container {
+        /* Barra azul superior */
+        .blue-bar {
+            background-color: #007ba3;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            padding: 15px 30px;
+            position: relative;
+            top: 0;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        /* Ajuste del logo para que sea más grande */
+        #logo a {
+            font-size: 2.5em;
+            color: #000;
+            text-decoration: none;
+        }
+
+        /* Alineación del icono de menú */
+        .menu-icon {
+            width: 50px;
+            height: auto;
+            vertical-align: middle;
+            margin-left: 20px;
+        }
+
+        /* Dropdown */
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            right: 0;
+            background-color: #f9f9f9;
+            min-width: 220px;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            z-index: 1;
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        .dropdown-content a {
+            color: black;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+        }
+
+        .dropdown-content a:hover {
+            background-color: #e0e0e0;
+        }
+
+        /* Estilos para centrar el título y subtítulo con margen superior */
+        .header-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            margin-top: 20px; /* Espacio en la parte superior */
+            text-align: center; /* Centra el texto */
+        }
+
+        .button.primary {
+            background-color: #007ba3;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            text-decoration: none;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .button.primary:hover {
+            background-color: #005f7f;
         }
     </style>
 </head>
 <body class="is-preload">
     <div id="page-wrapper">
 
-        <!-- Header -->
-        <header id="header">
+        <!-- Barra azul superior -->
+        <div class="blue-bar">
             <h1 id="logo"><a href="{% url 'home' %}">Equilibrium</a></h1>
             <nav id="nav">
                 <ul>
-                    <li><a href="{% url 'student_home' %}">Inicio</a></li>
-                    <li><a href="{% url 'view_student_profile' student_id=user.student_profile.id %}">Ver Psicólogo Asignado</a></li>
-                    <li><a href="{% url 'logout' %}">Cerrar Sesión</a></li>
+                    <li class="dropdown">
+                        <!-- Ícono de menú en lugar de texto -->
+                        <a href="javascript:void(0)" class="dropbtn">
+                            <img src="{% static 'img/menu-icon.png' %}" alt="Menú" class="menu-icon">
+                        </a>
+                        <div class="dropdown-content">
+                            <a href="{% url 'student_home' %}">Inicio</a>
+                            <a href="{% url 'view_assigned_psychologist' %}">Ver Psicólogo Asignado</a>
+                            <a href="{% url 'logout' %}">Cerrar Sesión</a>
+                        </div>
+                    </li>
                 </ul>
             </nav>
-        </header>
+        </div>
 
         <!-- Main Content -->
         <section id="main" class="container">
@@ -38,8 +118,10 @@
                     <h2>Explorar Psicólogos</h2>
                     <p>Selecciona un psicólogo y agenda una cita con él.</p>
                 </header>
+                
                 <!-- Botón de regreso alineado a la derecha -->
-                <button onclick="history.back()" class="button primary">Regresar</button>
+                <a href="{% url 'student_home' %}" class="button primary">Regresar</a>
+                <br>
             </div>
 
             <section class="box special features">

@@ -3,6 +3,8 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from .models import Psychologist, Student
+from django.forms.widgets import ClearableFileInput
+
 
 # Validaciones comunes
 phone_number_validator = RegexValidator(r'^\d{10}$', 'El número de teléfono debe contener exactamente 10 dígitos.')
@@ -171,4 +173,30 @@ class StudentEditForm(forms.ModelForm):
             'feelings': '¿Cómo te sientes en general?',
             'reason': 'Razón para agendar una sesión',
         }
+
+
+
+
+class CustomClearableFileInput(ClearableFileInput):
+    # Personalizamos el widget para que no se muestre el texto "Actualmente" ni el botón "Limpiar"
+    template_name = 'widgets/custom_clearable_file_input.html'
+
+class ProfilePhotoForm(forms.ModelForm):
+    class Meta:
+        model = Psychologist  # Cambia dinámicamente según la instancia
+        fields = ['profile_photo']
+        widgets = {
+            'profile_photo': CustomClearableFileInput(attrs={
+                'class': 'custom-upload',
+                'id': 'id_profile_photo',  # Esto asegura que el ID sea consistente
+            }),
+        }
+
+    def __init__(self, *args, **kwargs):
+        instance = kwargs.get('instance')  # Detectamos la instancia
+        super().__init__(*args, **kwargs)
+        if isinstance(instance, Psychologist):
+            self.Meta.model = Psychologist
+        elif isinstance(instance, Student):
+            self.Meta.model = Student
 

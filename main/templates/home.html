@@ -22,6 +22,45 @@
         transition: opacity 0.5s ease;
         z-index: 1000;
     }
+    .menu-icon {
+        width: 45px;
+        height: auto;
+        vertical-align: middle;
+        cursor: pointer;
+    }
+
+    .dropdown-content {
+        display: none;
+        position: absolute;
+        right: 10px;
+        background-color: #f9f9f9;
+        min-width: 200px;
+        box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+        z-index: 1;
+    }
+
+    .dropdown-content a {
+        color: black;
+        padding: 12px 16px;
+        text-decoration: none;
+        display: block;
+    }
+
+    .dropdown-content a:hover {
+        background-color: #e0e0e0;
+    }
+
+    /* Mostrar el menú desplegable al pasar el cursor */
+    .dropdown:hover .dropdown-content {
+        display: block;
+    }
+
+    /* Contenedor de icono y menú */
+    .dropdown {
+        position: relative;
+        display: inline-block;
+    }
+    
         /* Estilos adicionales para mejorar la visualización */
 
         /* Sección principal */
@@ -156,6 +195,8 @@
             margin: 0;
             font-weight: bold;
         }
+
+        
 
         /* Responsividad */
         @media (max-width: 768px) {
@@ -469,23 +510,27 @@
     <div id="page-wrapper">
 
         <!-- Header -->
-        <header id="header" class="alt">
-            <h1 id="logo"><a href="{% url 'home' %}">Equilibrium</a></h1>
-            <nav id="nav">
-                <ul>
-                    <li><a href="{% url 'home' %}">Inicio</a></li>
-                    <li class="dropdown">
-                        <a href="#">Registro</a>
-                        <ul class="dropdown-content">
-                            <li><a href="{% url 'register_psychologist' %}">Psicólogo</a></li>
-                            <li><a href="{% url 'register_student' %}">Estudiante</a></li>
+        <header id="header" class="alt header-container">
+            <div class="header-content">
+                <h1 id="logo" class="logo-text"><a href="{% url 'home' %}">Equilibrium</a></h1>
+                <nav id="nav">
+                        <ul>
+                            <li class="dropdown">
+                                <!-- Icono de menú en lugar de texto -->
+                                <a href="javascript:void(0)" class="dropbtn">
+                                    <img src="{% static 'img/menu-icon.png' %}" alt="Menú" class="menu-icon">
+                                </a>
+                                <div class="dropdown-content">
+                                    <a href="{% url 'register_psychologist' %}">Registro Psicólogo</a>
+                                    <a href="{% url 'register_student' %}">Registro Estudiante</a>
+                                    <a href="{% url 'login' %}">Iniciar Sesión</a>
+                                    <a href="#about">Acerca de Nosotros</a>
+                                </div>
+                            </li>
                         </ul>
-                    </li>
-                    <li><a href="{% url 'login' %}">Iniciar Sesión</a></li>
-                    <li><a href="#about">Acerca de Nosotros</a></li>
-                </ul>
-            </nav>
-        </header>
+                    </nav>
+                </header>
+                
 
         <!-- Banner -->
         <section id="banner">

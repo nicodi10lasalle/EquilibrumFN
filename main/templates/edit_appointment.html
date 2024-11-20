@@ -5,31 +5,137 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Editar Cita</title>
     {% load static %}
+    <link rel="stylesheet" href="{% static 'css/fontawesome-all.min.css' %}">
     <link rel="stylesheet" href="{% static 'css/main.css' %}">
+    <style>
+        /* Barra azul superior */
+        .blue-bar {
+            background-color: #007ba3;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 30px;
+            position: relative;
+            top: 0;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        /* Ajuste del logo */
+        #logo a {
+            font-size: 2.5em;
+            color: #000;
+            text-decoration: none;
+        }
+
+        /* Estilo del formulario */
+        .edit-appointment-container {
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 8px;
+            max-width: 600px;
+            margin: 30px auto;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .edit-appointment-container h2 {
+            margin-bottom: 20px;
+        }
+
+        .edit-appointment-container .form-group {
+            margin-bottom: 20px;
+        }
+
+        .edit-appointment-container label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        .edit-appointment-container input[type="datetime-local"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .edit-appointment-container .buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .edit-appointment-container .button {
+            padding: 10px 20px;
+            font-size: 1rem;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .edit-appointment-container .button.primary {
+            background-color: #007ba3;
+            color: #fff;
+            transition: background-color 0.3s;
+        }
+
+        .edit-appointment-container .button.primary:hover {
+            background-color: #005f7f;
+        }
+
+        .edit-appointment-container .button {
+            background-color: #e0e0e0;
+            color: #333;
+            transition: background-color 0.3s;
+        }
+
+        .edit-appointment-container .button:hover {
+            background-color: #ccc;
+        }
+    </style>
 </head>
-<body>
-    <section id="main" class="container">
-        <header class="major">
-            <h2>Editar Cita</h2>
-        </header>
+<body class="is-preload">
+    <!-- Page Wrapper -->
+    <div id="page-wrapper">
+        <!-- Barra azul superior -->
+        <div class="blue-bar">
+            <h1 id="logo"><a href="{% url 'home' %}">Equilibrium</a></h1>
+        </div>
 
-        {% if messages %}
-            {% for message in messages %}
-                <p class="alert {{ message.tags }}">{{ message }}</p>
-            {% endfor %}
-        {% endif %}
+        <!-- Main Content -->
+        <section id="main" class="container">
+            <div class="edit-appointment-container">
+                <header class="major">
+                    <h2>Editar Cita</h2>
+                </header>
+                <!-- Mensajes de error específicos para edición -->
+                {% if messages %}
+                    {% for message in messages %}
+                        {% if "guardada" in message.message or "actualizada" in message.message %}
+                            <p class="alert {{ message.tags }}">{{ message }}</p>
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
 
-        <form method="POST" class="form">
-            {% csrf_token %}
-            <div class="form-group">
-                <label for="date">Fecha y hora de la cita:</label>
-                <input type="datetime-local" name="date" id="date" required value="{{ appointment.start_time|date:'Y-m-d\TH:i' }}">
+                <form method="POST" class="form">
+                    {% csrf_token %}
+                    <!-- Campo oculto para enviar la URL de referencia -->
+                    <input type="hidden" name="prev_url" value="{{ request.META.HTTP_REFERER }}">
+                    <div class="form-group">
+                        <label for="date">Fecha y hora de la cita:</label>
+                        <input type="datetime-local" name="date" id="date" required value="{{ appointment.start_time|date:'Y-m-d\\TH:i' }}">
+                    </div>
+                    <div class="buttons">
+                        <!-- Botón para guardar cambios -->
+                        <button type="submit" class="button primary">Guardar cambios</button>
+                        <!-- Botón cancelar usando history.back() -->
+                        <button type="button" class="button" onclick="history.back()">Cancelar</button>
+                    </div>
+                </form>
             </div>
-            <div class="buttons">
-                <button type="submit" class="button primary">Guardar cambios</button>
-                <button type="submit" name="cancel" class="button">Cancelar</button>
-            </div>
-        </form>
-    </section>
+        </section>
+    </div>
 </body>
 </html>

@@ -8,78 +8,201 @@
     <link rel="stylesheet" href="{% static 'css/fontawesome-all.min.css' %}">
     <link rel="stylesheet" href="{% static 'css/main.css' %}">
     <style>
+        /* Barra azul superior */
+        .blue-bar {
+            background-color: #007ba3;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 30px;
+        }
+
+        #logo a {
+            font-size: 2.5em;
+            color: white;
+            text-decoration: none;
+        }
+
+        .menu-icon {
+            width: 50px;
+            height: auto;
+            margin-left: 20px;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            right: 0;
+            background-color: #f9f9f9;
+            min-width: 220px;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            z-index: 1;
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        .dropdown-content a {
+            color: black;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+        }
+
+        .dropdown-content a:hover {
+            background-color: #e0e0e0;
+        }
+
+        /* Contenedor del perfil */
         .profile-container {
+            max-width: 600px;
+            margin: 50px auto;
             text-align: center;
-            padding: 2rem;
-            background-color: #f8f8f8;
+            background: #f4f4f4;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
+
+        .profile-photo {
+            border-radius: 50%;
+            width: 150px;
+            height: 150px;
+            object-fit: cover;
+            margin-bottom: 20px;
+        }
+
         .profile-container h1 {
-            font-size: 2.5rem;
-            margin-bottom: 1.5rem;
+            font-size: 2em;
+            margin: 10px 0 20px;
         }
+
         .profile-container ul {
             list-style: none;
             padding: 0;
-            font-size: 1.2rem;
-            color: #555;
+            margin: 20px 0;
+            text-align: left;
         }
+
         .profile-container ul li {
-            margin-bottom: 1rem;
+            font-size: 1.1em;
+            margin: 10px 0;
         }
-        /* Estilo para los botones en el encabezado */
-        .header-button {
-            margin-right: 15px;
-            padding: 8px 16px;
+
+        .profile-container form {
+            margin: 20px 0;
+        }
+
+        .button {
             background-color: #007ba3;
             color: white;
-            text-decoration: none;
+            padding: 10px 20px;
+            border: none;
             border-radius: 5px;
+            font-size: 1em;
+            cursor: pointer;
+            text-decoration: none;
         }
-        .header-button:hover {
-            background-color: #005f7a;
+
+        .button:hover {
+            background-color: #005f78;
+        }
+
+        .custom-upload {
+            display: none; /* Oculta el input real */
+        }
+
+        .custom-file-label {
+            padding: 10px 20px;
+            background-color: #007ba3;
+            color: white;
+            border-radius: 5px;
+            font-size: 1em;
+            cursor: pointer;
+            display: inline-block;
+            text-align: center;
+            text-decoration: none;
+            margin-bottom: 10px;
+        }
+
+        .custom-file-label:hover {
+            background-color: #005f78;
         }
     </style>
 </head>
 <body class="is-preload">
     <div id="page-wrapper">
 
-        <!-- Header -->
-        <header id="header">
+        <!-- Barra azul superior -->
+        <div class="blue-bar">
             <h1 id="logo"><a href="{% url 'home' %}">Equilibrium</a></h1>
             <nav id="nav">
                 <ul>
-                    <!-- Botón de regresar -->
-                    <li><a href="javascript:history.back()" class="header-button">Regresar</a></li>
-                    <!-- Botón de editar perfil -->
-                    <li><a href="{% url 'edit_profile' %}" class="header-button">Editar Perfil</a></li>
-                    <li><a href="{% url 'logout' %}">Cerrar Sesión</a></li>
+                    <li class="dropdown">
+                        <a href="javascript:void(0)" class="dropbtn">
+                            <img src="{% static 'img/menu-icon.png' %}" alt="Menú" class="menu-icon">
+                        </a>
+                        <div class="dropdown-content">
+                            {% if is_student %}
+                                <a href="{% url 'student_home' %}">Inicio</a>
+                            {% else %}
+                                <a href="{% url 'psychologist_home' %}">Inicio</a>
+                            {% endif %}
+                            <a href="{% url 'logout' %}">Cerrar Sesión</a>
+                        </div>
+                    </li>
                 </ul>
             </nav>
-        </header>
+        </div>
 
-        <!-- Main Content -->
-        <section id="main" class="profile-container">
-            <h1>Perfil de {{ profile_data.user.username }}</h1>
-            <ul>
-                <li><strong>Nombre:</strong> {{ profile_data.name }}</li>
-                <li><strong>Email:</strong> {{ profile_data.user.email }}</li>
-                <li><strong>Edad:</strong> {{ profile_data.age }}</li>
+        <!-- Contenedor del perfil -->
+        <section id="main" class="container">
+            <div class="profile-container">
+                <!-- Título del perfil -->
+                <h1>Perfil de {{ profile_data.user.username }}</h1>
 
-                {% if profile_data.specialty %}
-                    <li><strong>Especialidad:</strong> {{ profile_data.specialty }}</li>
-                    <li><strong>Teléfono:</strong> {{ profile_data.phone_number }}</li>
+                <!-- Foto de perfil -->
+                {% if profile_data.profile_photo %}
+                    <img src="{{ profile_data.profile_photo.url }}" alt="Foto de perfil" class="profile-photo">
                 {% else %}
-                    <li><strong>Número de estudiante:</strong> {{ profile_data.student_number }}</li>
-                    <li><strong>Lugar de residencia:</strong> {{ profile_data.location }}</li>
-                    <li><strong>Psicólogo asignado:</strong> 
-                        {% if profile_data.psychologist %}
-                            {{ profile_data.psychologist.username }}
-                        {% else %}
-                            No asignado
-                        {% endif %}
-                    </li>
+                    <img src="{% static 'img/default-profile.png' %}" alt="Foto de perfil" class="profile-photo">
                 {% endif %}
-            </ul>
+
+                <form method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="custom-file-input">
+                        <label for="id_profile_photo" class="custom-file-label">Seleccionar Foto</label>
+                        <input type="file" name="profile_photo" id="id_profile_photo" class="custom-upload">
+                    </div>
+                    <button type="submit" class="button">Actualizar Foto</button>
+                </form>
+                
+                <!-- Información del usuario -->
+                <ul>
+                    <li><strong>Nombre:</strong> {{ profile_data.name }}</li>
+                    <li><strong>Email:</strong> {{ profile_data.user.email }}</li>
+                    <li><strong>Edad:</strong> {{ profile_data.age }}</li>
+
+                    {% if is_student %}
+                        <li><strong>Número de estudiante:</strong> {{ profile_data.student_number }}</li>
+                        <li><strong>Lugar de residencia:</strong> {{ profile_data.location }}</li>
+                        <li><strong>Psicólogo asignado:</strong>
+                            {% if profile_data.psychologist %}
+                                {{ profile_data.psychologist.name }}
+                            {% else %}
+                                No asignado
+                            {% endif %}
+                        </li>
+                    {% else %}
+                        <li><strong>Especialidad:</strong> {{ profile_data.specialty }}</li>
+                        <li><strong>Teléfono:</strong> {{ profile_data.phone_number }}</li>
+                    {% endif %}
+                </ul>
+
+                <!-- Botón para editar perfil -->
+                <a href="{% url 'edit_profile' %}" class="button">Editar Perfil</a>
+            </div>
         </section>
 
         <!-- Footer -->
@@ -94,8 +217,5 @@
             </ul>
         </footer>
     </div>
-
-    <!-- Scripts -->
-    <script src="{% static 'js/main.js' %}"></script>
 </body>
 </html>

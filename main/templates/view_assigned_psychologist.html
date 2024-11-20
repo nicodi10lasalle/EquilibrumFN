@@ -8,6 +8,67 @@
     <link rel="stylesheet" href="{% static 'css/fontawesome-all.min.css' %}">
     <link rel="stylesheet" href="{% static 'css/main.css' %}">
     <style>
+        /* Barra azul superior */
+        .blue-bar {
+            background-color: #007ba3;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 30px;
+            position: relative;
+            top: 0;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        /* Ajuste del logo para que sea más grande */
+        #logo a {
+            font-size: 2.5em;
+            color: #000;
+            text-decoration: none;
+        }
+
+        /* Alineación del icono de menú */
+        .menu-icon {
+            width: 50px;
+            height: auto;
+            vertical-align: middle;
+            margin-left: 20px;
+        }
+
+        /* Dropdown */
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            right: 0;
+            background-color: #f9f9f9;
+            min-width: 220px;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            z-index: 1;
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        .dropdown-content a {
+            color: black;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+        }
+
+        .dropdown-content a:hover {
+            background-color: #e0e0e0;
+        }
+
+        /* Estilo para el contenido principal */
+        #main {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        /* Botón en grupo */
         .button-group {
             display: flex;
             justify-content: center;
@@ -19,17 +80,27 @@
     <!-- Page Wrapper -->
     <div id="page-wrapper">
 
-        <!-- Header -->
-        <header id="header">
+        <!-- Barra azul superior -->
+        <div class="blue-bar">
             <h1 id="logo"><a href="{% url 'home' %}">Equilibrium</a></h1>
             <nav id="nav">
                 <ul>
-                    <li><a href="{% url 'student_home' %}">Inicio</a></li>
-                    <li><a href="{% url 'explore_psychologists' %}">Explorar Psicólogos</a></li>
-                    <li><a href="{% url 'logout' %}">Cerrar Sesión</a></li>
+                    <li class="dropdown">
+                        <!-- Ícono de menú en lugar de texto -->
+                        <a href="javascript:void(0)" class="dropbtn">
+                            <img src="{% static 'img/menu-icon.png' %}" alt="Menú" class="menu-icon">
+                        </a>
+                        <div class="dropdown-content">
+                            <a href="{% url 'student_home' %}">Inicio</a>
+                            <a href="{% url 'explore_psychologists' %}">Explorar Psicólogos</a>
+                            <a href="{% url 'view_assigned_psychologist' %}">Ver Psicólogo Asignado</a>
+                            <a href="{% url 'profile' user.id %}">Ver Perfil</a>
+                            <a href="{% url 'logout' %}">Cerrar Sesión</a>
+                        </div>
+                    </li>
                 </ul>
             </nav>
-        </header>
+        </div>
 
         <!-- Main Content -->
         <section id="main" class="container">

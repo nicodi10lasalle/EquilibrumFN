@@ -12,6 +12,8 @@ from datetime import datetime
 from django.contrib import messages
 from django.shortcuts import redirect
 from django.urls import reverse
+from .forms import ProfilePhotoForm
+
 
 
 
@@ -103,18 +105,38 @@ def home(request):
     return render(request, 'home.html')
 
 @login_required
-def profile(request, user_id):
-    user = get_object_or_404(User, id=user_id)
+def profile(request, user_id=None):
+    # Si no se proporciona un user_id, usar el del usuario autenticado
+    user = get_object_or_404(User, id=user_id) if user_id else request.user
 
-    # Verificar si es estudiante o psicólogo
-    if hasattr(user, 'student_profile'):
-        profile_data = user.student_profile
-    elif hasattr(user, 'psychologist_profile'):
-        profile_data = user.psychologist_profile
+    # Determinar si el usuario es estudiante o psicólogo
+    profile_data = (
+        user.student_profile if hasattr(user, 'student_profile') else
+        user.psychologist_profile if hasattr(user, 'psychologist_profile') else
+        None
+    )
+
+    if not profile_data:  # Si no hay perfil asociado, redirigir al inicio
+        messages.error(request, "Perfil no encontrado.")
+        return redirect('home')
+
+    # Procesar la carga de la foto de perfil
+    if request.method == 'POST':
+        profile_form = ProfilePhotoForm(request.POST, request.FILES, instance=profile_data)
+        if profile_form.is_valid():
+            profile_form.save()
+            messages.success(request, 'Foto de perfil actualizada correctamente.')
+            return redirect('profile', user_id=user.id)
+        else:
+            messages.error(request, 'Ocurrió un error al actualizar la foto.')
     else:
-        profile_data = None
+        profile_form = ProfilePhotoForm(instance=profile_data)
 
-    return render(request, 'profile.html', {'profile_data': profile_data})
+    return render(request, 'profile.html', {
+        'profile_data': profile_data,
+        'profile_form': profile_form,
+        'is_student': hasattr(user, 'student_profile'),
+    })
 
 @login_required
 def edit_profile(request):
@@ -163,12 +185,21 @@ def appointments_data(request):
 @login_required
 def manage_students(request):
     students = Student.objects.all()
+    psychologist = request.user.psychologist_profile if hasattr(request.user, 'psychologist_profile') else None
 
+    # Filtro de búsqueda por nombre
     if 'search' in request.GET:
         query = request.GET['search']
         students = students.filter(name__icontains=query)
+    
+    # Filtro para mostrar solo estudiantes asignados al psicólogo logueado
+    if 'assigned_only' in request.GET and psychologist:
+        students = students.filter(psychologist=psychologist)
 
-    return render(request, 'manage_students.html', {'students': students})
+    return render(request, 'manage_students.html', {
+        'students': students,
+        'psychologist': psychologist
+    })
 
 @login_required
 def assign_psychologist(request, student_id):
@@ -270,7 +301,8 @@ def psychologist_schedule(request, psychologist_id):
             appointment_id = request.POST.get('delete_appointment_id')
             appointment = get_object_or_404(Appointment, id=appointment_id, student=student)
             appointment.delete()
-            messages.success(request, 'Cita eliminada exitosamente.')
+            # Redirección directa después de eliminar una cita
+            return redirect('psychologist_schedule', psychologist_id=psychologist.id)
 
     appointments = Appointment.objects.filter(psychologist=psychologist).order_by('start_time')
     return render(request, 'psychologist_schedule.html', {'psychologist': psychologist, 'appointments': appointments})
@@ -292,38 +324,40 @@ def view_assigned_psychologist(request):
 from django.shortcuts import render, get_object_or_404, redirect
 from .models import Appointment
 
+
 @login_required
 def edit_appointment(request, appointment_id):
     appointment = get_object_or_404(Appointment, id=appointment_id)
 
-    # Verificar si el usuario es el psicólogo de la cita o el estudiante involucrado
+    # Verificar permisos
     if not (
         (hasattr(request.user, 'psychologist_profile') and appointment.psychologist.user == request.user) or
         (hasattr(request.user, 'student_profile') and appointment.student.user == request.user)
     ):
         return redirect('home')  # Redirigir si el usuario no está autorizado
 
-    if request.method == 'POST':
-        # Si se presiona el botón de cancelar, redirige sin hacer cambios
-        if 'cancel' in request.POST:
-            return redirect('manage_appointments')
+    # Captura de la URL previa (default a una página segura si no existe)
+    prev_url = request.POST.get('prev_url', reverse('home'))
 
+    if request.method == 'POST':
         date_str = request.POST.get('date')
-        if date_str:  # Asegurarse de que date_str no sea None
+        if date_str:
             try:
+                # Actualización de la cita
                 start_time = datetime.strptime(date_str, '%Y-%m-%dT%H:%M')
                 appointment.start_time = start_time
-                appointment.end_time = start_time  # Ajustar según la duración deseada de la cita
+                appointment.end_time = start_time
                 appointment.save()
                 messages.success(request, 'La cita se ha actualizado correctamente.')
-                return redirect('manage_appointments')
+
+                # Redirige a la URL previa
+                return redirect(prev_url)
             except ValueError:
                 messages.error(request, 'Formato de fecha inválido.')
         else:
             messages.error(request, 'La fecha de la cita es requerida.')
 
     return render(request, 'edit_appointment.html', {'appointment': appointment})
-
 
 @login_required
 def manage_appointments(request):
@@ -346,3 +380,16 @@ def manage_appointments(request):
         'appointments': appointments,
     })
 
+@login_required
+def schedule_appointment(request):
+    # Verifica si el usuario actual es un estudiante
+    if hasattr(request.user, 'student_profile'):
+        student = request.user.student_profile
+        if student.psychologist:
+            # Redirige a la agenda del psicólogo asignado
+            return redirect('psychologist_schedule', psychologist_id=student.psychologist.id)
+        else:
+            # Redirige a la página para explorar psicólogos
+            return redirect('explore_psychologists')
+    else:
+        return redirect('student_home')  # Redirige al inicio del estudiante si no es un estudiante

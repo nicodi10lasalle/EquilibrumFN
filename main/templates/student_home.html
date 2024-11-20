@@ -23,6 +23,91 @@
             opacity: 1;
             transition: opacity 0.5s ease;
         }
+
+        /* Barra azul superior */
+        .blue-bar {
+            background-color: #007ba3;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 30px;
+            position: relative;
+            top: 0;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        /* Ajuste del logo para que sea más grande */
+        #logo a {
+            font-size: 2.5em; /* Doble del tamaño actual */
+            color: rgb(2, 0, 0);
+            text-decoration: none;
+        }
+
+        /* Alineación del icono de menú */
+        .menu-icon {
+            width: 50px; /* Aumentar tamaño del icono */
+            height: auto;
+            vertical-align: middle;
+            margin-left: 20px; /* Espacio entre el logo y el icono */
+        }
+
+        /* Alinear texto e icono dentro de la barra */
+        .blue-bar h1, .blue-bar nav {
+            margin: 0;
+            display: flex;
+            align-items: center;
+        }
+
+        /* Estilo para centrar el contenido principal */
+        #main {
+            margin-top: 20px; /* Añade un margen superior para el espacio entre barra y contenido */
+            text-align: center; /* Centra el texto "Bienvenido, alex" */
+        }
+
+        /* Estilo para alinear las secciones en una fila */
+        .features-row {
+            display: flex;
+            justify-content: center;
+            gap: 2rem; /* Ajusta el espacio entre los botones si es necesario */
+        }
+
+        .features-row section {
+            text-align: center;
+            width: 100%; /* Asegura que todos los botones estén en línea */
+        }
+
+        .button.primary {
+            display: inline-block;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        /* Dropdown */
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            right: 0;
+            background-color: #f9f9f9;
+            min-width: 220px;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            z-index: 1;
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        .dropdown-content a {
+            color: black;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+        }
+
+        .dropdown-content a:hover {
+            background-color: #e0e0e0;
+        }
     </style>
 </head>
 <body class="is-preload">
@@ -33,19 +118,27 @@
             Bienvenido, Estudiante
         </div>
 
-        <!-- Header -->
-        <header id="header">
+        <!-- Barra azul superior -->
+        <div class="blue-bar">
             <h1 id="logo"><a href="{% url 'home' %}">Equilibrium</a></h1>
             <nav id="nav">
                 <ul>
-                    <li><a href="{% url 'student_home' %}">Inicio</a></li>
-                    <li><a href="{% url 'explore_psychologists' %}">Explorar Psicólogos</a></li>
-                    <li><a href="{% url 'view_assigned_psychologist' %}">Ver Psicólogo Asignado</a></li>
-                    <li><a href="{% url 'profile' user.id %}">Ver Perfil</a></li>
-                    <li><a href="{% url 'logout' %}">Cerrar Sesión</a></li>
+                    <li class="dropdown">
+                        <!-- Ícono de menú en lugar de texto -->
+                        <a href="javascript:void(0)" class="dropbtn">
+                            <img src="{% static 'img/menu-icon.png' %}" alt="Menú" class="menu-icon">
+                        </a>
+                        <div class="dropdown-content">
+                            <a href="{% url 'student_home' %}">Inicio</a>
+                            <a href="{% url 'explore_psychologists' %}">Explorar Psicólogos</a>
+                            <a href="{% url 'view_assigned_psychologist' %}">Ver Psicólogo Asignado</a>
+                            <a href="{% url 'profile' user.id %}">Ver Perfil</a>
+                            <a href="{% url 'logout' %}">Cerrar Sesión</a>
+                        </div>
+                    </li>
                 </ul>
             </nav>
-        </header>
+        </div>
 
         <!-- Main Content -->
         <section id="main" class="container">
@@ -61,6 +154,12 @@
                         <h3>Ver Psicólogo Asignado</h3>
                         <p>Puedes ver el perfil de tu psicólogo asignado y consultar su disponibilidad.</p>
                         <a href="{% url 'view_assigned_psychologist' %}" class="button primary">Ver Psicólogo</a>
+                    </section>
+                    <section>
+                        <span class="icon solid major fa-calendar-plus accent1"></span>
+                        <h3>Sacar Cita</h3>
+                        <p>Agenda una nueva cita con tu psicólogo asignado o explora otros psicólogos.</p>
+                        <a href="{% url 'schedule_appointment' %}" class="button primary">Sacar Cita</a>
                     </section>
                     <section>
                         <span class="icon solid major fa-search accent3"></span>
@@ -83,14 +182,8 @@
                 <li>&copy; 2024 Equilibrium. Todos los derechos reservados.</li>
             </ul>
         </footer>
-
     </div>
 
-    <script src="{% static 'js/jquery.min.js' %}"></script>
-    <script src="{% static 'js/jquery.dropotron.min.js' %}"></script>
-    <script src="{% static 'js/browser.min.js' %}"></script>
-    <script src="{% static 'js/breakpoints.min.js' %}"></script>
-    <script src="{% static 'js/util.js' %}"></script>
     <script src="{% static 'js/main.js' %}"></script>
 
     <!-- Script para ocultar el mensaje de bienvenida -->
