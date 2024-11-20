@@ -34,6 +34,7 @@ urlpatterns = [
     path('psychologist/manage_appointments/', views.manage_appointments, name='manage_appointments'),
     path('schedule_appointment/', views.schedule_appointment, name='schedule_appointment'),
     path('note/<int:note_id>/delete/', views.delete_note, name='delete_note'),
+    path('appointment/<int:appointment_id>/delete/', views.delete_appointment, name='delete_appointment'),
 ]
 
 # Configuración para servir archivos estáticos y multimedia en modo desarrollo

@@ -1,41 +1,31 @@
 <!DOCTYPE HTML>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Calendario de Citas - Equilibrium</title>
     {% load static %}
-    <link rel="stylesheet" href="{% static 'css/fontawesome-all.min.css' %}">
-    <link rel="stylesheet" href="{% static 'css/main.css' %}">
-    <link href='https://cdn.jsdelivr.net/npm/fullcalendar@5.10.2/main.min.css' rel='stylesheet' />
+    <link rel="stylesheet" href="{% static 'css/fontawesome-all.min.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/main.css' %}" />
+    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.2/main.min.css" rel="stylesheet" />
     <style>
-        /* Barra azul superior */
+        /* Estilo del menú superior */
         .blue-bar {
             background-color: #007ba3;
             display: flex;
             justify-content: space-between;
             align-items: center;
             padding: 15px 30px;
-            position: relative;
-            top: 0;
             width: 100%;
             box-sizing: border-box;
         }
-        
-        .centered-header {
-            text-align: center;
-            margin-top: 20px; /* Ajusta el espacio superior como necesites */
-        }
 
-        /* Ajuste del logo para que sea más grande */
         #logo a {
             font-size: 2.5em;
             color: rgb(2, 0, 0);
             text-decoration: none;
         }
 
-        /* Alineación del icono de menú */
         .menu-icon {
             width: 50px;
             height: auto;
@@ -43,15 +33,14 @@
             margin-left: 20px;
         }
 
-        /* Dropdown */
         .dropdown-content {
             display: none;
             position: absolute;
             right: 0;
             background-color: #f9f9f9;
             min-width: 220px;
-            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-            z-index: 1;
+            box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
         }
 
         .dropdown:hover .dropdown-content {
@@ -68,12 +57,37 @@
         .dropdown-content a:hover {
             background-color: #e0e0e0;
         }
+
+        /* Menú contextual del calendario */
+        .context-menu {
+            display: none;
+            position: absolute;
+            z-index: 2000;
+            background: white;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 10px;
+            font-size: 0.9em;
+        }
+
+        .context-menu a {
+            display: block;
+            padding: 5px 10px;
+            color: #007ba3;
+            text-decoration: none;
+            border-radius: 4px;
+        }
+
+        .context-menu a:hover {
+            background: #f4f4f4;
+        }
     </style>
 </head>
 <body>
     <div id="page-wrapper">
 
-        <!-- Barra azul superior -->
+        <!-- Barra superior -->
         <div class="blue-bar">
             <h1 id="logo"><a href="{% url 'home' %}">Equilibrium</a></h1>
             <nav id="nav">
@@ -92,16 +106,21 @@
             </nav>
         </div>
 
-        <!-- Main Section -->
+        <!-- Contenido principal -->
         <section id="main" class="container">
             <header class="major centered-header">
                 <br>
                 <h2>Calendario de Citas</h2>
                 <p>Revisa y administra tus citas con estudiantes.</p>
             </header>
-            <!-- Calendario -->
             <div class="box special">
                 <div id="calendar"></div>
+                <!-- Menú contextual -->
+                <div id="context-menu" class="context-menu">
+                    <a href="#" id="edit-link">Editar Cita</a>
+                    <a href="#" id="delete-link">Eliminar Cita</a>
+                    <a href="#" id="profile-link">Ir al Perfil</a>
+                </div>
             </div>
         </section>
 
@@ -119,24 +138,92 @@
     </div>
 
     <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.2/main.min.js"></script>
     <script src="{% static 'js/jquery.min.js' %}"></script>
-    <script src="{% static 'js/main.js' %}"></script>
-    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.10.2/main.min.js'></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            var calendarEl = document.getElementById('calendar');
-            var calendar = new FullCalendar.Calendar(calendarEl, {
-                initialView: 'dayGridMonth',
-                locale: 'es',
-                events: '/appointments-data/',
-                headerToolbar: {
-                    left: 'prev,next today',
-                    center: 'title',
-                    right: 'dayGridMonth,timeGridWeek,timeGridDay'
-                }
-            });
-            calendar.render();
+    document.addEventListener('DOMContentLoaded', function () {
+        var calendarEl = document.getElementById('calendar');
+        var contextMenu = document.getElementById('context-menu');
+        var editLink = document.getElementById('edit-link');
+        var deleteLink = document.getElementById('delete-link');
+        var profileLink = document.getElementById('profile-link');
+        var isMenuHovered = false; // Variable para saber si el menú está siendo "hovered"
+
+        // Detectar cuando el mouse está sobre el menú
+        contextMenu.addEventListener('mouseenter', function () {
+            isMenuHovered = true;
         });
-    </script>
+
+        contextMenu.addEventListener('mouseleave', function () {
+            isMenuHovered = false;
+            contextMenu.style.display = 'none'; // Ocultar menú si el cursor se sale de él
+        });
+
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'dayGridMonth',
+            locale: 'es',
+            events: '/appointments-data/',
+            headerToolbar: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'dayGridMonth,timeGridWeek,timeGridDay'
+            },
+            eventMouseEnter: function (info) {
+                var appointmentId = info.event.id;
+                var studentId = info.event.extendedProps.studentId;
+
+                // Actualizar enlaces del menú contextual
+                editLink.href = `/appointment/${appointmentId}/edit/`;
+                deleteLink.onclick = function () {
+                    if (confirm('¿Seguro que deseas eliminar esta cita?')) {
+                        fetch(`/appointment/${appointmentId}/delete/`, {
+                            method: 'POST',
+                            headers: {
+                                'X-CSRFToken': '{{ csrf_token }}', // Asegúrate de incluir el token CSRF
+                                'Content-Type': 'application/json'
+                            }
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                alert('Cita eliminada.');
+                                calendar.refetchEvents();
+                            } else {
+                                alert(`Error al eliminar la cita: ${data.error}`);
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            alert('Ocurrió un error al eliminar la cita.');
+                        });
+                    }
+                };
+                profileLink.href = `/student/${studentId}/view/`;
+
+                // Mostrar menú contextual
+                contextMenu.style.display = 'block';
+                contextMenu.style.left = `${info.jsEvent.pageX}px`;
+                contextMenu.style.top = `${info.jsEvent.pageY}px`;
+            },
+            eventMouseLeave: function (info) {
+                setTimeout(function () {
+                    // Ocultar menú contextual si el cursor no está sobre él
+                    if (!isMenuHovered) {
+                        contextMenu.style.display = 'none';
+                    }
+                }, 300); // Delay para permitir el hover en el menú
+            }
+        });
+
+        calendar.render();
+
+        // Ocultar menú contextual al hacer clic fuera
+        document.addEventListener('click', function (event) {
+            if (!contextMenu.contains(event.target)) {
+                contextMenu.style.display = 'none';
+            }
+        });
+    });
+</script>
 </body>
 </html>

@@ -176,20 +176,21 @@ def calendar_view(request):
 
 @login_required
 def appointments_data(request):
-    # Verificar que el usuario es un psicólogo
-    if request.user.is_authenticated and hasattr(request.user, 'psychologist_profile'):
-        appointments = Appointment.objects.filter(psychologist=request.user.psychologist_profile)
+    if hasattr(request.user, 'psychologist_profile'):
+        psychologist = request.user.psychologist_profile
+        appointments = Appointment.objects.filter(psychologist=psychologist)
         events = [
             {
+                'id': appointment.id,
                 'title': f"Cita con {appointment.student.name}",
                 'start': appointment.start_time.isoformat(),
                 'end': appointment.end_time.isoformat(),
+                'studentId': appointment.student.id,  # Incluimos el ID del estudiante
             }
             for appointment in appointments
         ]
         return JsonResponse(events, safe=False)
-    else:
-        return JsonResponse([], safe=False)
+    return JsonResponse([], safe=False)
 
 @login_required
 def manage_students(request):
@@ -210,13 +211,20 @@ def manage_students(request):
         'psychologist': psychologist
     })
 
+
+
 @login_required
 def assign_psychologist(request, student_id):
     student = get_object_or_404(Student, id=student_id)
     if hasattr(request.user, 'psychologist_profile'):
-        psychologist = request.user.psychologist_profile  # Obtener la instancia de Psychologist
-        student.psychologist = psychologist  # Asignar la instancia de Psychologist
+        psychologist = request.user.psychologist_profile
+        student.psychologist = psychologist
         student.save()
+
+        # Verificar si se pasó un parámetro `redirect_to`
+        redirect_to = request.POST.get('redirect_to')
+        if redirect_to:
+            return redirect(redirect_to)  # Redirigir al URL especificado en el formulario
         return redirect('manage_students')
     return redirect('manage_students')
 
@@ -225,6 +233,9 @@ def view_student_profile(request, student_id):
     student = get_object_or_404(Student, id=student_id)
     current_user = request.user
     can_edit = student.psychologist == current_user.psychologist_profile
+
+    # Define si el usuario tiene un perfil de psicólogo
+    is_psychologist = hasattr(current_user, 'psychologist_profile')
 
     if request.method == 'POST' and 'private_notes' in request.POST:
         note_id = request.POST.get('note_id', None)
@@ -266,6 +277,7 @@ def view_student_profile(request, student_id):
         'student': student,
         'can_edit': can_edit,
         'notes': notes,
+        'is_psychologist': is_psychologist,  # Ahora esta variable está definida
     })
 
 @login_required
@@ -287,7 +299,13 @@ def remove_psychologist(request, student_id):
 @login_required
 def explore_psychologists(request):
     psychologists = Psychologist.objects.all()
-    return render(request, 'explore_psychologists.html', {'psychologists': psychologists})
+    student = request.user.student_profile if hasattr(request.user, 'student_profile') else None
+    assigned_psychologist = student.psychologist if student else None
+
+    return render(request, 'explore_psychologists.html', {
+        'psychologists': psychologists,
+        'assigned_psychologist': assigned_psychologist,
+    })
 
 @login_required
 def psychologist_schedule(request, psychologist_id):
@@ -432,3 +450,19 @@ def delete_note(request, note_id):
     
     # Redirigir al perfil del estudiante
     return redirect('view_student_profile', student_id=note.student.id)
+
+@login_required
+def delete_appointment(request, appointment_id):
+    if request.method == "POST":
+        try:
+            appointment = get_object_or_404(Appointment, id=appointment_id)
+
+            # Verifica si el usuario tiene permiso para eliminar la cita
+            if hasattr(request.user, 'psychologist_profile') and appointment.psychologist.user == request.user:
+                appointment.delete()
+                return JsonResponse({'success': True})
+            else:
+                return JsonResponse({'success': False, 'error': 'No tienes permiso para eliminar esta cita.'}, status=403)
+        except Exception as e:
+            return JsonResponse({'success': False, 'error': str(e)}, status=400)
+    return JsonResponse({'success': False, 'error': 'Método no permitido.'}, status=405)

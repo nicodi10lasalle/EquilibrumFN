@@ -21,14 +21,12 @@
             box-sizing: border-box;
         }
 
-        /* Ajuste del logo para que sea más grande */
         #logo a {
             font-size: 2.5em;
             color: #000;
             text-decoration: none;
         }
 
-        /* Alineación del icono de menú */
         .menu-icon {
             width: 50px;
             height: auto;
@@ -43,7 +41,7 @@
             right: 0;
             background-color: #f9f9f9;
             min-width: 220px;
-            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
             z-index: 1;
         }
 
@@ -68,6 +66,16 @@
             text-align: center;
         }
 
+        /* Estilo para la foto de perfil */
+        .profile-photo {
+            border-radius: 50%;
+            width: 150px;
+            height: 150px;
+            object-fit: cover;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
         /* Botón en grupo */
         .button-group {
             display: flex;
@@ -86,7 +94,6 @@
             <nav id="nav">
                 <ul>
                     <li class="dropdown">
-                        <!-- Ícono de menú en lugar de texto -->
                         <a href="javascript:void(0)" class="dropbtn">
                             <img src="{% static 'img/menu-icon.png' %}" alt="Menú" class="menu-icon">
                         </a>
@@ -112,6 +119,14 @@
             <!-- Detalles del Psicólogo -->
             <section class="box special">
                 {% if psychologist %}
+                    <!-- Foto de perfil -->
+                    {% if psychologist.profile_photo %}
+                        <img src="{{ psychologist.profile_photo.url }}" alt="Foto de perfil del psicólogo" class="profile-photo">
+                    {% else %}
+                        <img src="{% static 'img/default-profile.png' %}" alt="Foto de perfil predeterminada" class="profile-photo">
+                    {% endif %}
+                    
+                    <!-- Detalles del psicólogo -->
                     <h3>{{ psychologist.user.first_name }} {{ psychologist.user.last_name }}</h3>
                     <p><strong>Especialidad:</strong> {{ psychologist.specialty }}</p>
                     <p><strong>Contacto:</strong> {{ psychologist.phone_number }}</p>

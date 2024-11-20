@@ -160,6 +160,15 @@
                 <li><strong>Lugar de residencia:</strong> {{ student.location }}</li>
                 <li><strong>Psicólogo asignado:</strong> {{ student.psychologist.user.username }}</li>
             </ul>
+
+            {% if not student.psychologist and is_psychologist %}
+            <form method="POST" action="{% url 'assign_psychologist' student.id %}">
+                {% csrf_token %}
+                <input type="hidden" name="redirect_to" value="{% url 'view_student_profile' student.id %}">
+                <button type="submit" class="button delete-button">Asignarme como Psicólogo</button>
+            </form>
+            {% endif %}
+            
             {% if can_edit %}
             <form method="POST" action="{% url 'remove_psychologist' student.id %}">
                 {% csrf_token %}

@@ -67,6 +67,22 @@
         .dropdown-content a:hover {
             background-color: #e0e0e0;
         }
+
+        /* Botón de "Ir al Perfil" */
+        .profile-button {
+            background-color: #007ba3;
+            color: white;
+            padding: 5px 10px;
+            border: none;
+            border-radius: 5px;
+            font-size: 0.9em;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .profile-button:hover {
+            background-color: #005f78;
+        }
     </style>
 </head>
 <body class="is-preload">
@@ -107,6 +123,7 @@
             <table class="alt">
                 <thead>
                     <tr>
+                        <th>Ir al Perfil</th>
                         <th>Nombre del Estudiante</th>
                         <th>Fecha y Hora de Inicio</th>
                         <th>Fecha y Hora de Fin</th>
@@ -117,6 +134,9 @@
                 <tbody>
                     {% for appointment in appointments %}
                     <tr>
+                        <td>
+                            <a href="{% url 'view_student_profile' appointment.student.id %}" class="profile-button">Perfil</a>
+                        </td>
                         <td>{{ appointment.student.name }}</td>
                         <td>{{ appointment.start_time|date:"d/m/Y H:i" }}</td>
                         <td>{{ appointment.end_time|date:"d/m/Y H:i" }}</td>
@@ -135,7 +155,7 @@
                     </tr>
                     {% empty %}
                         <tr>
-                            <td colspan="5">No hay citas programadas.</td>
+                            <td colspan="6">No hay citas programadas.</td>
                         </tr>
                     {% endfor %}
                 </tbody>

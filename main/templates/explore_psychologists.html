@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
     <title>Explorar Psicólogos - Equilibrium</title>
     {% load static %}
-    <!-- Enlazar los archivos CSS -->
     <link rel="stylesheet" href="{% static 'css/fontawesome-all.min.css' %}" />
     <link rel="stylesheet" href="{% static 'css/main.css' %}" />
     <style>
@@ -22,14 +21,12 @@
             box-sizing: border-box;
         }
 
-        /* Ajuste del logo para que sea más grande */
         #logo a {
             font-size: 2.5em;
             color: #000;
             text-decoration: none;
         }
 
-        /* Alineación del icono de menú */
         .menu-icon {
             width: 50px;
             height: auto;
@@ -44,7 +41,7 @@
             right: 0;
             background-color: #f9f9f9;
             min-width: 220px;
-            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
             z-index: 1;
         }
 
@@ -63,14 +60,13 @@
             background-color: #e0e0e0;
         }
 
-        /* Estilos para centrar el título y subtítulo con margen superior */
         .header-container {
             display: flex;
             justify-content: center;
             align-items: center;
             flex-direction: column;
-            margin-top: 20px; /* Espacio en la parte superior */
-            text-align: center; /* Centra el texto */
+            margin-top: 20px;
+            text-align: center;
         }
 
         .button.primary {
@@ -83,8 +79,60 @@
             cursor: pointer;
             transition: background-color 0.3s;
         }
+
         .button.primary:hover {
             background-color: #005f7f;
+        }
+
+        /* Estilo para las tarjetas */
+        .psychologist-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: left;
+            padding: 20px;
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            background: #f9f9f9;
+            margin: 10px;
+            transition: transform 0.2s ease;
+        }
+
+        .psychologist-card:hover {
+            transform: scale(1.03);
+        }
+
+        .psychologist-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .psychologist-icon {
+            font-size: 1.8em;
+            margin-right: 10px;
+        }
+
+        .psychologist-name {
+            font-size: 1.1em;
+            font-weight: bold;
+            margin: 0;
+        }
+
+        .psychologist-name.assigned {
+            color: green;
+        }
+
+        .psychologist-specialty {
+            font-size: 1em;
+            color: #555;
+            margin: 5px 0 0 0;
+        }
+
+        .button-container {
+            margin-top: 10px;
         }
     </style>
 </head>
@@ -97,7 +145,6 @@
             <nav id="nav">
                 <ul>
                     <li class="dropdown">
-                        <!-- Ícono de menú en lugar de texto -->
                         <a href="javascript:void(0)" class="dropbtn">
                             <img src="{% static 'img/menu-icon.png' %}" alt="Menú" class="menu-icon">
                         </a>
@@ -119,7 +166,6 @@
                     <p>Selecciona un psicólogo y agenda una cita con él.</p>
                 </header>
                 
-                <!-- Botón de regreso alineado a la derecha -->
                 <a href="{% url 'student_home' %}" class="button primary">Regresar</a>
                 <br>
             </div>
@@ -128,12 +174,22 @@
                 <div class="row">
                     {% for psychologist in psychologists %}
                     <div class="col-6 col-12-mobile">
-                        <section>
-                            <span class="icon solid major fa-user accent2"></span>
-                            <h3>{{ psychologist.name }}</h3>
-                            <p>{{ psychologist.specialty }}</p>
-                            <a href="{% url 'psychologist_schedule' psychologist_id=psychologist.id %}" class="button primary">Ver Disponibilidad</a>
-                        </section>
+                        <div class="psychologist-card">
+                            <div class="psychologist-header">
+                                <span class="icon solid major fa-user psychologist-icon" 
+                                      style="color: {% if assigned_psychologist and psychologist.id == assigned_psychologist.id %}green{% else %}gray{% endif %};">
+                                </span>
+                                <div>
+                                    <h3 class="psychologist-name {% if assigned_psychologist and psychologist.id == assigned_psychologist.id %}assigned{% endif %}">
+                                        {{ psychologist.name }}
+                                    </h3>
+                                    <p class="psychologist-specialty">{{ psychologist.specialty }}</p>
+                                </div>
+                            </div>
+                            <div class="button-container">
+                                <a href="{% url 'psychologist_schedule' psychologist_id=psychologist.id %}" class="button primary">Ver Disponibilidad</a>
+                            </div>
+                        </div>
                     </div>
                     {% endfor %}
                 </div>
@@ -154,7 +210,6 @@
 
     </div>
 
-    <!-- Scripts -->
     <script src="{% static 'js/jquery.min.js' %}"></script>
     <script src="{% static 'js/jquery.dropotron.min.js' %}"></script>
     <script src="{% static 'js/browser.min.js' %}"></script>
