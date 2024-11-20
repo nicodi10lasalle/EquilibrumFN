@@ -386,7 +386,6 @@ def edit_appointment(request, appointment_id):
                 appointment.start_time = start_time
                 appointment.end_time = start_time
                 appointment.save()
-                messages.success(request, 'La cita se ha actualizado correctamente.')
 
                 # Redirige a la URL previa
                 return redirect(prev_url)

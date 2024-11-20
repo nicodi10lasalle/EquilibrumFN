@@ -111,13 +111,6 @@
                     <h2>Editar Cita</h2>
                 </header>
                 <!-- Mensajes de error específicos para edición -->
-                {% if messages %}
-                    {% for message in messages %}
-                        {% if "guardada" in message.message or "actualizada" in message.message %}
-                            <p class="alert {{ message.tags }}">{{ message }}</p>
-                        {% endif %}
-                    {% endfor %}
-                {% endif %}
 
                 <form method="POST" class="form">
                     {% csrf_token %}
