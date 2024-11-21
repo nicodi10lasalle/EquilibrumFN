@@ -211,90 +211,75 @@
             }
         }
 
-        /* sueño  */
         #division-sueno {
-            text-align: center;
-            padding: 3rem 1rem;
-            background-color: #f8f8f8;
-        }
+    text-align: center; /* Centra el texto horizontalmente */
+    padding: 3rem 1rem;
+    background-color: #f8f8f8;
+}
 
-        #division-sueno h2 {
-            font-size: 2.5rem;
-            color: #3367d6;
-            margin-bottom: 1rem;
-        }
+#division-sueno h2 {
+    font-size: 2.5rem;
+    color: #3367d6;
+    margin-bottom: 1rem;
+    text-align: center; /* Asegura que el título también esté centrado */
+}
 
-        #division-sueno p {
-            max-width: 800px;
-            margin: 0 auto 2rem;
-            color: #555;
-            font-size: 1.2rem;
-            line-height: 1.6;
-        }
+#division-sueno p {
+    max-width: 800px;
+    margin: 0 auto 2rem; /* Centra el párrafo horizontalmente */
+    color: #555;
+    font-size: 1.2rem;
+    line-height: 1.6;
+    text-align: center; /* Centra el texto */
+}
 
-        /* Contenedor de la imagen y lista */
-        .sueno-content {
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-            gap: 2rem;
-            flex-wrap: wrap;
-        }
+.sueno-list {
+    display: flex;
+    flex-direction: column; /* Coloca los elementos en una sola columna */
+    align-items: center; /* Centra los elementos horizontalmente */
+    gap: 2rem; /* Agrega espacio entre los elementos */
+}
 
-        /* Imagen */
-        .sueno-image {
-            max-width: 400px;
-            border-radius: 8px;
-            overflow: hidden;
-        }
+.sueno-list-item {
+    display: flex;
+    flex-direction: row; /* Elementos en fila (ícono + texto) */
+    align-items: flex-start; /* Alinea el contenido al inicio */
+    gap: 1rem; /* Espacio entre el ícono y el texto */
+    max-width: 800px; /* Restringe el ancho máximo de cada elemento */
+    margin: 0 auto; /* Centra horizontalmente */
+}
 
-        .sueno-image img {
-            width: 100%;
-            height: auto;
-            border-radius: 8px;
-        }
+.sueno-list-icon {
+    font-size: 2rem;
+    color: #3367d6;
+    margin-right: 1rem;
+}
 
-        /* Lista de pasos */
-        .sueno-list {
-            max-width: 500px;
-            text-align: left;
-        }
+.sueno-list-title {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #333;
+    text-align: left; /* Alinea el título del servicio a la izquierda */
+}
 
-        .sueno-list-item {
-            display: flex;
-            align-items: flex-start;
-            margin-bottom: 1.5rem;
-        }
+.sueno-list-desc {
+    color: #555;
+    font-size: 1rem;
+    line-height: 1.4;
+    text-align: left; /* Alinea la descripción del servicio a la izquierda */
+}
 
-        .sueno-list-icon {
-            font-size: 2rem;
-            color: #3367d6;
-            margin-right: 1rem;
-        }
-
-        .sueno-list-title {
-            font-size: 1.2rem;
-            font-weight: bold;
-            color: #333;
-        }
-
-        .sueno-list-desc {
-            color: #555;
-            font-size: 1rem;
-            line-height: 1.4;
-        }
-
-        /* Botón */
-        .button {
-            background-color: #ff5b5b;
-            color: #fff;
-            padding: 0.8rem 1.5rem;
-            border-radius: 5px;
-            text-decoration: none;
-            font-weight: bold;
-            transition: background-color 0.3s ease;
-        }
-
+.button {
+    margin-top: 2rem;
+    background-color: #ff5b5b;
+    color: white;
+    padding: 0.8rem 1.5rem;
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+    text-align: center; /* Centra el texto dentro del botón */
+}
         .button:hover {
             background-color: #ff4040;
         }
@@ -328,13 +313,28 @@
 
         #banner h2 {
             font-size: 3rem;
-            margin-bottom: 1rem;
+            margin-bottom: 0rem;
         }
 
         #banner p {
             font-size: 1.5rem;
-            margin-bottom: 2rem;
+            margin-bottom: 0rem;
         }
+        /* Eliminar márgenes y relleno no deseados */
+#header {
+    margin-bottom: 0; /* Elimina cualquier margen inferior del header */
+    padding-bottom: 0; /* Por si hay relleno adicional */
+}
+
+#banner {
+    margin-top: 0; /* Elimina cualquier margen superior */
+    padding-top: 0; /* Por si hay relleno adicional */
+}
+
+#banner .inner h2,
+#banner .inner p {
+    margin: 0; /* Ajusta márgenes internos de los textos */
+}
 
         .button.primary {
             background-color: #fff;
@@ -512,8 +512,8 @@
 <!-- Header -->
 <header id="header" class="alt header-container" style="background-color: #007ba3; padding: 1rem;">
     <div class="header-content" style="display: flex; align-items: center; justify-content: space-between;">
-        <h1 id="logo" class="logo-text" style="color: white; margin: 0;">
-            <a href="{% url 'home' %}" style="color: white; text-decoration: none;">Equilibrium</a>
+        <h1 id="logo" class="logo-text" style="color:  #007ba3(4, 0, 252); margin: 0;">
+            <a href="{% url 'home' %}" style="color: rgb(0, 0, 0); text-decoration: none;">Equilibrium</a>
         </h1>
         <nav id="nav">
             <ul style="list-style: none; margin: 0; padding: 0; display: flex; align-items: center;">
@@ -539,9 +539,11 @@
         <!-- Banner -->
         <section id="banner">
             <div class="inner">
+                <br>
                 <h2>Bienvenido a Equilibrium</h2>
                 <p>Una plataforma diseñada para mejorar tu bienestar mental.</p>
                 <ul class="actions special">
+                    <br>
                     <li><a href="{% url 'login' %}" class="button primary">Agenda una Cita</a></li>
                 </ul>
             </div>
@@ -635,7 +637,7 @@
         <div class="opcion-grid">
             <!-- Imagen -->
             <div class="imagen">
-                <img src="ruta-a-tu-imagen.jpg" alt="Ilustración de interacción con el psicólogo" style="width:100%; max-width: 400px; border-radius: 8px;">
+                <img src="{% static 'images/psicologa-paciente.jpg' %}"Ilustración de interacción con el psicólogo" style="width:100%; max-width: 400px; border-radius: 8px;">
             </div>
 
             <!-- Contenido -->
@@ -673,17 +675,12 @@
     </section>
 
         <!-- Sección de Trastornos del Sueño -->
-        <section id="division-sueno">
-            <h2>División De Trastornos Del Sueño</h2>
-            <p>Recientemente, hemos integrado una nueva división especializada en trastornos del sueño. Nuestro equipo está compuesto por profesionales de la salud con amplia experiencia y conocimientos en el campo de la medicina del sueño.</p>
-            
-            <div class="sueno-content">
-                <!-- Imagen de la división de trastornos -->
-                <div class="sueno-image">
-                    <img src="ruta-de-la-imagen.jpg" alt="División de Trastornos del Sueño">
-                </div>
+ 
+
+            <section id="division-sueno">
+                <h2>División De Trastornos Del Sueño</h2>
+                <p>Recientemente, hemos integrado una nueva división especializada en trastornos del sueño. Nuestro equipo está compuesto por profesionales de la salud con amplia experiencia y conocimientos en el campo de la medicina del sueño.</p>
                 
-                <!-- Lista de servicios -->
                 <div class="sueno-list">
                     <div class="sueno-list-item">
                         <div class="sueno-list-icon">🔍</div>
@@ -716,44 +713,11 @@
                             <p class="sueno-list-desc">El somnólogo puede recomendar la realización de estudios de sueño. Entre los estudios de sueño están la polisomnografía y la poligrafía respiratoria.</p>
                         </div>
                     </div>
-                    
-                    <!-- Botón de "Saber Más" -->
-                    <a href="#" class="button">Saber Más</a>
                 </div>
-            </div>
-        </section>
+                
+                <a href="#" class="button">Saber Más</a>
+            </section>
 
-
-        <!-- Contact Form Section -->
-        <section id="contact" class="container">
-            <h2>DUDAS O COMENTARIOS</h2>
-            <p>¡Contáctanos! Estamos interesados en ayudarte</p>
-            
-            <form action="/send-message/" method="POST" class="contact-form">
-                <div class="form-group">
-                    <label for="name">Nombre</label>
-                    <input type="text" id="name" name="name" placeholder="Nombre" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="email">Correo</label>
-                    <input type="email" id="email" name="email" placeholder="Correo" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="phone">Teléfono</label>
-                    <input type="tel" id="phone" name="phone" placeholder="Teléfono" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="message">Mensaje</label>
-                    <textarea id="message" name="message" placeholder="Mensaje" rows="5" required></textarea>
-                </div>
-                
-                <!-- Google reCAPTCHA -->
-                <div class="form-group">
-                    <div class="g-recaptcha" data-sitekey="TU_CLAVE_DE_SITIO_RECAPTCHA"></div>
-                </div>
                 
                 <div class="form-group">
                     <label>
@@ -762,9 +726,7 @@
                     </label>
                 </div>
                 
-                <button type="submit" class="button primary">Enviar</button>
-            </form>
-        </section>
+
 
         <!-- Footer -->
         <footer id="footer">
