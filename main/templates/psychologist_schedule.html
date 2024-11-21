@@ -85,6 +85,25 @@
             font-size: 0.8rem;
             border-radius: 3px;
         }
+
+        /* Estilo para los mensajes */
+        .messages {
+            list-style: none;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+
+        .messages .success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .messages .error {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
     </style>
 </head>
 <body class="is-preload">
@@ -118,6 +137,15 @@
                 <p>Consulta las citas disponibles y agenda una nueva cita.</p>
             </header>
 
+            <!-- Mostrar mensajes -->
+            {% if messages %}
+                <ul class="messages">
+                    {% for message in messages %}
+                        <li class="{{ message.tags }}">{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+
             <!-- Citas Agendadas -->
             <section class="box special">
                 <h2>Citas agendadas</h2>
@@ -148,7 +176,12 @@
                 <form method="POST">
                     {% csrf_token %}
                     <label for="date">Selecciona una fecha y hora:</label>
-                    <input type="datetime-local" name="date" required>
+                    <input 
+                        type="datetime-local" 
+                        name="date" 
+                        required 
+                        min="{{ now|date:'Y-m-d\\TH:i' }}" 
+                        max="2024-12-31T20:00">
                     <button type="submit" class="button primary">Agendar cita</button>
                 </form>
             </section>

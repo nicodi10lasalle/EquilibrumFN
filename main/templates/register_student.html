@@ -13,7 +13,7 @@
         }
 
         #logo {
-            font-size: 2.5em;  /* Mismo tamaño del logo en la home */
+            font-size: 2.5em; 
             font-weight: bold;
             text-align: left;
             margin: 20px 0;
@@ -21,11 +21,11 @@
 
         #logo a {
             text-decoration: none;
-            color: #000;  /* Logo en color negro */
+            color: #000;
         }
 
         #logo a:hover {
-            color: #333;  /* Cambia ligeramente el color al pasar el cursor */
+            color: #333;
         }
 
         #registration-form {
@@ -49,14 +49,25 @@
             font-weight: bold;
         }
 
-        #registration-form input[type="text"],
-        #registration-form input[type="email"],
-        #registration-form input[type="password"] {
+        #registration-form input {
             width: 100%;
             padding: 0.75rem;
             margin-bottom: 1.5rem;
             border-radius: 5px;
             border: 1px solid #ccc;
+            font-size: 1em;
+        }
+
+        #registration-form input.error {
+            border: 1px solid red;
+            background-color: #ffe6e6;
+        }
+
+        #registration-form .error-message {
+            color: red;
+            font-size: 0.9em;
+            margin-top: -1rem;
+            margin-bottom: 1rem;
         }
 
         #registration-form button {
@@ -91,16 +102,78 @@
     <section id="main" class="container">
         <div id="registration-form">
             <h2>Registro para Estudiantes</h2>
-            <form method="POST">
+            <form method="POST" id="form">
                 {% csrf_token %}
-                {{ form.as_p }}  <!-- Mostrar el formulario con Django -->
+                {{ form.as_p }}
+                <label for="username">Nombre de usuario:</label>
+                <input type="text" id="username" name="username" placeholder="Ejemplo: estudiante123" required>
+                
+                <label for="email">Correo electrónico:</label>
+                <input type="email" id="email" name="email" placeholder="Ejemplo: estudiante@correo.com" required>
+                
+                <label for="password">Contraseña:</label>
+                <input type="password" id="password" name="password" placeholder="Ejemplo: MiContraseña1" required>
+                
                 <button type="submit">Registrarse</button>
             </form>
         </div>
     </section>
 
     <!-- Scripts -->
-    <script src="{% static 'js/jquery.min.js' %}"></script>
-    <script src="{% static 'js/main.js' %}"></script>
+    <script>
+        const form = document.getElementById('form');
+
+        form.addEventListener('submit', function (event) {
+            let valid = true;
+
+            // Obtener todos los campos de texto
+            const inputs = form.querySelectorAll('input[type="text"], input[type="email"], input[type="password"]');
+
+            // Validar cada campo
+            inputs.forEach(input => {
+                // Remover mensajes de error previos
+                const errorDiv = document.createElement('div');
+                errorDiv.classList.add('error-message');
+                if (input.nextElementSibling?.classList.contains('error-message')) {
+                    input.nextElementSibling.remove();
+                }
+
+                // Validar campos
+                if (!input.value.trim()) {
+                    valid = false;
+                    input.classList.add('error');
+                    errorDiv.textContent = 'Este campo es obligatorio.';
+                    input.insertAdjacentElement('afterend', errorDiv);
+                } else if (input.type === 'text' && (input.value.length < 3 || input.value.length > 12)) {
+                    valid = false;
+                    input.classList.add('error');
+                    errorDiv.textContent = 'Debe tener entre 3 y 12 caracteres.';
+                    input.insertAdjacentElement('afterend', errorDiv);
+                } else if (input.type === 'text' && !/^[a-zA-Z0-9]+$/.test(input.value)) {
+                    valid = false;
+                    input.classList.add('error');
+                    errorDiv.textContent = 'Solo se permiten letras y números.';
+                    input.insertAdjacentElement('afterend', errorDiv);
+                } else if (input.type === 'email' && !input.checkValidity()) {
+                    valid = false;
+                    input.classList.add('error');
+                    errorDiv.textContent = 'Debe ser un correo válido.';
+                    input.insertAdjacentElement('afterend', errorDiv);
+                } else if (input.type === 'password' && (input.value.length < 6 || input.value.length > 12)) {
+                    valid = false;
+                    input.classList.add('error');
+                    errorDiv.textContent = 'La contraseña debe tener entre 6 y 12 caracteres.';
+                    input.insertAdjacentElement('afterend', errorDiv);
+                } else {
+                    input.classList.remove('error');
+                }
+            });
+
+            // Detener el envío si hay errores
+            if (!valid) {
+                event.preventDefault();
+            }
+        });
+    </script>
 </body>
 </html>

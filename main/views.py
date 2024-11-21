@@ -13,6 +13,11 @@ from django.contrib import messages
 from django.shortcuts import redirect
 from django.urls import reverse
 from .forms import ProfilePhotoForm
+from django.utils.timezone import now, make_aware, is_aware
+from datetime import timedelta
+
+
+
 
 
 
@@ -325,25 +330,36 @@ def psychologist_schedule(request, psychologist_id):
         if 'date' in request.POST:
             date_str = request.POST.get('date')
             start_time = datetime.strptime(date_str, '%Y-%m-%dT%H:%M')
-            if start_time >= datetime.now():
+            start_time = make_aware(start_time)
+
+            if start_time < now():
+                messages.error(request, 'No puedes agendar una cita en una fecha pasada.')
+            elif not (8 <= start_time.hour < 20):
+                messages.error(request, 'Las citas solo pueden ser entre las 8:00 y las 20:00.')
+            elif Appointment.objects.filter(psychologist=psychologist, start_time=start_time).exists():
+                messages.error(request, 'Ya hay una cita agendada a esta hora.')
+            else:
                 Appointment.objects.create(
                     student=student,
                     psychologist=psychologist,
                     start_time=start_time,
-                    end_time=start_time
+                    end_time=start_time + timedelta(hours=1)
                 )
                 messages.success(request, 'Cita agendada exitosamente.')
-            else:
-                messages.error(request, 'No puedes agendar una cita en una fecha pasada.')
+
         elif 'delete_appointment_id' in request.POST:
             appointment_id = request.POST.get('delete_appointment_id')
             appointment = get_object_or_404(Appointment, id=appointment_id, student=student)
             appointment.delete()
-            # Redirección directa después de eliminar una cita
+            messages.success(request, 'Cita eliminada exitosamente.')
             return redirect('psychologist_schedule', psychologist_id=psychologist.id)
 
-    appointments = Appointment.objects.filter(psychologist=psychologist).order_by('start_time')
-    return render(request, 'psychologist_schedule.html', {'psychologist': psychologist, 'appointments': appointments})
+    appointments = appointments.order_by('start_time')
+    return render(request, 'psychologist_schedule.html', {
+        'psychologist': psychologist,
+        'appointments': appointments,
+        'now': now(),  # Pasar la fecha y hora actuales al template
+    })
 
 @login_required
 def view_assigned_psychologist(request):

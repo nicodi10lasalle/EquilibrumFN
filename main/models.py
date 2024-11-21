@@ -1,7 +1,9 @@
 from django.db import models
 from django.contrib.auth.models import User
 from datetime import datetime
-
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+from django.utils.timezone import now
 
 class Psychologist(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='psychologist_profile')
@@ -41,8 +43,10 @@ class Appointment(models.Model):
     start_time = models.DateTimeField()
     end_time = models.DateTimeField()
 
-    def __str__(self):
-        return f"Cita con {self.student.name} el {self.start_time.strftime('%Y-%m-%d %H:%M')}"
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        # Eliminar citas pasadas automáticamente
+        Appointment.objects.filter(end_time__lt=now()).delete()
     
 class PrivateNote(models.Model):
     student = models.ForeignKey(Student, on_delete=models.CASCADE, related_name='notes')

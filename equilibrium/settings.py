@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-e(5t6ln9i%y_9b@0ep(+maa43q2x3+$6(0#hjnl5*a)#+x9170
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost', '127.0.0.1']  # Agrega hosts permitidos para seguridad
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
@@ -40,7 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'main',
+    'main',  # Tu aplicación
 ]
 
 MIDDLEWARE = [
@@ -58,7 +58,7 @@ ROOT_URLCONF = 'equilibrium.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates'],
+        'DIRS': [BASE_DIR / 'templates'],  # Directorio de templates
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -89,11 +89,9 @@ DATABASES = {
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
-
     {
         'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
     },
-
     {
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
@@ -105,7 +103,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'es'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'America/Mexico_City'  # Zona horaria de México
 
 USE_I18N = True
 
@@ -115,20 +113,31 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
-# settings.py
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-# Configuración de envío de correos
+
+
+# Email configuration
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'  # O el servidor SMTP que prefieras
+EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'tu_correo@gmail.com'  # Tu correo electrónico
-EMAIL_HOST_PASSWORD = 'tu_contraseña_de_correo'  # Tu contraseña
+EMAIL_USE_SSL = False  # Asegúrate de que esté en False si usas TLS
+EMAIL_HOST_USER = 'tu_correo@gmail.com'  # Cambia a tu correo
+EMAIL_HOST_PASSWORD = 'tu_contraseña_de_correo'  # Usa una contraseña segura o App Password
 
-# Configuración adicional
-DEFAULT_FROM_EMAIL = 'Equilibrium <noreply@equilibrium.com>'  # Nombre que aparecerá en los correos
+# Configuración adicional para correos
+DEFAULT_FROM_EMAIL = 'Equilibrium <noreply@equilibrium.com>'  # Nombre en correos
+SERVER_EMAIL = 'noreply@equilibrium.com'  # Correo para errores en producción
+
+# Seguridad adicional en producción (para DEBUG=False)
+CSRF_COOKIE_SECURE = not DEBUG
+SESSION_COOKIE_SECURE = not DEBUG
+SECURE_BROWSER_XSS_FILTER = True
+SECURE_CONTENT_TYPE_NOSNIFF = True
+
